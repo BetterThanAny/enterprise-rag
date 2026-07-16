@@ -1,0 +1,251 @@
+{"record_type":"metadata","dataset_version":"m3-controlled-synthetic-v1","dataset_kind":"controlled_synthetic_regression","description":"Fixed synthetic retrieval regression set with explicit labels. It is not human-labeled production relevance truth."}
+{"record_type":"corpus","document_key":"policy-001","title":"Record retention","content":"Record retention controltoken001. This controlled policy defines how long audit and business records must be preserved. The unique regression identifier is controltoken001."}
+{"record_type":"query","query_id":"q-001-1","query":"controltoken001 policy details","relevant_document_keys":["policy-001"]}
+{"record_type":"query","query_id":"q-001-2","query":"What does controltoken001 require?","relevant_document_keys":["policy-001"]}
+{"record_type":"query","query_id":"q-001-3","query":"Find guidance for controltoken001","relevant_document_keys":["policy-001"]}
+{"record_type":"query","query_id":"q-001-4","query":"controltoken001 compliance rule","relevant_document_keys":["policy-001"]}
+{"record_type":"corpus","document_key":"policy-002","title":"Incident response","content":"Incident response controltoken002. This controlled policy defines severity levels escalation owners and containment duties. The unique regression identifier is controltoken002."}
+{"record_type":"query","query_id":"q-002-1","query":"controltoken002 policy details","relevant_document_keys":["policy-002"]}
+{"record_type":"query","query_id":"q-002-2","query":"What does controltoken002 require?","relevant_document_keys":["policy-002"]}
+{"record_type":"query","query_id":"q-002-3","query":"Find guidance for controltoken002","relevant_document_keys":["policy-002"]}
+{"record_type":"query","query_id":"q-002-4","query":"controltoken002 compliance rule","relevant_document_keys":["policy-002"]}
+{"record_type":"corpus","document_key":"policy-003","title":"Travel expenses","content":"Travel expenses controltoken003. This controlled policy requires itemized receipts and manager approval for reimbursements. The unique regression identifier is controltoken003."}
+{"record_type":"query","query_id":"q-003-1","query":"controltoken003 policy details","relevant_document_keys":["policy-003"]}
+{"record_type":"query","query_id":"q-003-2","query":"What does controltoken003 require?","relevant_document_keys":["policy-003"]}
+{"record_type":"query","query_id":"q-003-3","query":"Find guidance for controltoken003","relevant_document_keys":["policy-003"]}
+{"record_type":"query","query_id":"q-003-4","query":"controltoken003 compliance rule","relevant_document_keys":["policy-003"]}
+{"record_type":"corpus","document_key":"policy-004","title":"Remote work","content":"Remote work controltoken004. This controlled policy sets secure workspace network and availability requirements. The unique regression identifier is controltoken004."}
+{"record_type":"query","query_id":"q-004-1","query":"controltoken004 policy details","relevant_document_keys":["policy-004"]}
+{"record_type":"query","query_id":"q-004-2","query":"What does controltoken004 require?","relevant_document_keys":["policy-004"]}
+{"record_type":"query","query_id":"q-004-3","query":"Find guidance for controltoken004","relevant_document_keys":["policy-004"]}
+{"record_type":"query","query_id":"q-004-4","query":"controltoken004 compliance rule","relevant_document_keys":["policy-004"]}
+{"record_type":"corpus","document_key":"policy-005","title":"Parental leave","content":"Parental leave controltoken005. This controlled policy explains eligibility notice periods and benefit coordination. The unique regression identifier is controltoken005."}
+{"record_type":"query","query_id":"q-005-1","query":"controltoken005 policy details","relevant_document_keys":["policy-005"]}
+{"record_type":"query","query_id":"q-005-2","query":"What does controltoken005 require?","relevant_document_keys":["policy-005"]}
+{"record_type":"query","query_id":"q-005-3","query":"Find guidance for controltoken005","relevant_document_keys":["policy-005"]}
+{"record_type":"query","query_id":"q-005-4","query":"controltoken005 compliance rule","relevant_document_keys":["policy-005"]}
+{"record_type":"corpus","document_key":"policy-006","title":"Access reviews","content":"Access reviews controltoken006. This controlled policy requires quarterly review of privileged and application access. The unique regression identifier is controltoken006."}
+{"record_type":"query","query_id":"q-006-1","query":"controltoken006 policy details","relevant_document_keys":["policy-006"]}
+{"record_type":"query","query_id":"q-006-2","query":"What does controltoken006 require?","relevant_document_keys":["policy-006"]}
+{"record_type":"query","query_id":"q-006-3","query":"Find guidance for controltoken006","relevant_document_keys":["policy-006"]}
+{"record_type":"query","query_id":"q-006-4","query":"controltoken006 compliance rule","relevant_document_keys":["policy-006"]}
+{"record_type":"corpus","document_key":"policy-007","title":"Data classification","content":"Data classification controltoken007. This controlled policy defines public internal confidential and restricted handling. The unique regression identifier is controltoken007."}
+{"record_type":"query","query_id":"q-007-1","query":"controltoken007 policy details","relevant_document_keys":["policy-007"]}
+{"record_type":"query","query_id":"q-007-2","query":"What does controltoken007 require?","relevant_document_keys":["policy-007"]}
+{"record_type":"query","query_id":"q-007-3","query":"Find guidance for controltoken007","relevant_document_keys":["policy-007"]}
+{"record_type":"query","query_id":"q-007-4","query":"controltoken007 compliance rule","relevant_document_keys":["policy-007"]}
+{"record_type":"corpus","document_key":"policy-008","title":"Vendor onboarding","content":"Vendor onboarding controltoken008. This controlled policy requires due diligence contracts and security review before access. The unique regression identifier is controltoken008."}
+{"record_type":"query","query_id":"q-008-1","query":"controltoken008 policy details","relevant_document_keys":["policy-008"]}
+{"record_type":"query","query_id":"q-008-2","query":"What does controltoken008 require?","relevant_document_keys":["policy-008"]}
+{"record_type":"query","query_id":"q-008-3","query":"Find guidance for controltoken008","relevant_document_keys":["policy-008"]}
+{"record_type":"query","query_id":"q-008-4","query":"controltoken008 compliance rule","relevant_document_keys":["policy-008"]}
+{"record_type":"corpus","document_key":"policy-009","title":"Backup recovery","content":"Backup recovery controltoken009. This controlled policy sets backup frequency restoration testing and recovery ownership. The unique regression identifier is controltoken009."}
+{"record_type":"query","query_id":"q-009-1","query":"controltoken009 policy details","relevant_document_keys":["policy-009"]}
+{"record_type":"query","query_id":"q-009-2","query":"What does controltoken009 require?","relevant_document_keys":["policy-009"]}
+{"record_type":"query","query_id":"q-009-3","query":"Find guidance for controltoken009","relevant_document_keys":["policy-009"]}
+{"record_type":"query","query_id":"q-009-4","query":"controltoken009 compliance rule","relevant_document_keys":["policy-009"]}
+{"record_type":"corpus","document_key":"policy-010","title":"Change management","content":"Change management controltoken010. This controlled policy requires risk review testing approval and rollback plans. The unique regression identifier is controltoken010."}
+{"record_type":"query","query_id":"q-010-1","query":"controltoken010 policy details","relevant_document_keys":["policy-010"]}
+{"record_type":"query","query_id":"q-010-2","query":"What does controltoken010 require?","relevant_document_keys":["policy-010"]}
+{"record_type":"query","query_id":"q-010-3","query":"Find guidance for controltoken010","relevant_document_keys":["policy-010"]}
+{"record_type":"query","query_id":"q-010-4","query":"controltoken010 compliance rule","relevant_document_keys":["policy-010"]}
+{"record_type":"corpus","document_key":"policy-011","title":"Password rotation","content":"Password rotation controltoken011. This controlled policy sets rotation and compromise response requirements. The unique regression identifier is controltoken011."}
+{"record_type":"query","query_id":"q-011-1","query":"controltoken011 policy details","relevant_document_keys":["policy-011"]}
+{"record_type":"query","query_id":"q-011-2","query":"What does controltoken011 require?","relevant_document_keys":["policy-011"]}
+{"record_type":"query","query_id":"q-011-3","query":"Find guidance for controltoken011","relevant_document_keys":["policy-011"]}
+{"record_type":"query","query_id":"q-011-4","query":"controltoken011 compliance rule","relevant_document_keys":["policy-011"]}
+{"record_type":"corpus","document_key":"policy-012","title":"Encryption keys","content":"Encryption keys controltoken012. This controlled policy defines generation storage rotation and revocation controls. The unique regression identifier is controltoken012."}
+{"record_type":"query","query_id":"q-012-1","query":"controltoken012 policy details","relevant_document_keys":["policy-012"]}
+{"record_type":"query","query_id":"q-012-2","query":"What does controltoken012 require?","relevant_document_keys":["policy-012"]}
+{"record_type":"query","query_id":"q-012-3","query":"Find guidance for controltoken012","relevant_document_keys":["policy-012"]}
+{"record_type":"query","query_id":"q-012-4","query":"controltoken012 compliance rule","relevant_document_keys":["policy-012"]}
+{"record_type":"corpus","document_key":"policy-013","title":"Procurement approvals","content":"Procurement approvals controltoken013. This controlled policy defines spending thresholds competitive bids and approvers. The unique regression identifier is controltoken013."}
+{"record_type":"query","query_id":"q-013-1","query":"controltoken013 policy details","relevant_document_keys":["policy-013"]}
+{"record_type":"query","query_id":"q-013-2","query":"What does controltoken013 require?","relevant_document_keys":["policy-013"]}
+{"record_type":"query","query_id":"q-013-3","query":"Find guidance for controltoken013","relevant_document_keys":["policy-013"]}
+{"record_type":"query","query_id":"q-013-4","query":"controltoken013 compliance rule","relevant_document_keys":["policy-013"]}
+{"record_type":"corpus","document_key":"policy-014","title":"Conflict of interest","content":"Conflict of interest controltoken014. This controlled policy requires disclosure review and mitigation of personal interests. The unique regression identifier is controltoken014."}
+{"record_type":"query","query_id":"q-014-1","query":"controltoken014 policy details","relevant_document_keys":["policy-014"]}
+{"record_type":"query","query_id":"q-014-2","query":"What does controltoken014 require?","relevant_document_keys":["policy-014"]}
+{"record_type":"query","query_id":"q-014-3","query":"Find guidance for controltoken014","relevant_document_keys":["policy-014"]}
+{"record_type":"query","query_id":"q-014-4","query":"controltoken014 compliance rule","relevant_document_keys":["policy-014"]}
+{"record_type":"corpus","document_key":"policy-015","title":"Anti bribery","content":"Anti bribery controltoken015. This controlled policy prohibits improper payments and defines gift approval thresholds. The unique regression identifier is controltoken015."}
+{"record_type":"query","query_id":"q-015-1","query":"controltoken015 policy details","relevant_document_keys":["policy-015"]}
+{"record_type":"query","query_id":"q-015-2","query":"What does controltoken015 require?","relevant_document_keys":["policy-015"]}
+{"record_type":"query","query_id":"q-015-3","query":"Find guidance for controltoken015","relevant_document_keys":["policy-015"]}
+{"record_type":"query","query_id":"q-015-4","query":"controltoken015 compliance rule","relevant_document_keys":["policy-015"]}
+{"record_type":"corpus","document_key":"policy-016","title":"Acceptable use","content":"Acceptable use controltoken016. This controlled policy defines permitted use of company systems and prohibited activity. The unique regression identifier is controltoken016."}
+{"record_type":"query","query_id":"q-016-1","query":"controltoken016 policy details","relevant_document_keys":["policy-016"]}
+{"record_type":"query","query_id":"q-016-2","query":"What does controltoken016 require?","relevant_document_keys":["policy-016"]}
+{"record_type":"query","query_id":"q-016-3","query":"Find guidance for controltoken016","relevant_document_keys":["policy-016"]}
+{"record_type":"query","query_id":"q-016-4","query":"controltoken016 compliance rule","relevant_document_keys":["policy-016"]}
+{"record_type":"corpus","document_key":"policy-017","title":"Mobile devices","content":"Mobile devices controltoken017. This controlled policy requires screen locks encryption and remote wipe enrollment. The unique regression identifier is controltoken017."}
+{"record_type":"query","query_id":"q-017-1","query":"controltoken017 policy details","relevant_document_keys":["policy-017"]}
+{"record_type":"query","query_id":"q-017-2","query":"What does controltoken017 require?","relevant_document_keys":["policy-017"]}
+{"record_type":"query","query_id":"q-017-3","query":"Find guidance for controltoken017","relevant_document_keys":["policy-017"]}
+{"record_type":"query","query_id":"q-017-4","query":"controltoken017 compliance rule","relevant_document_keys":["policy-017"]}
+{"record_type":"corpus","document_key":"policy-018","title":"Physical security","content":"Physical security controltoken018. This controlled policy defines badge use secure areas and incident reporting. The unique regression identifier is controltoken018."}
+{"record_type":"query","query_id":"q-018-1","query":"controltoken018 policy details","relevant_document_keys":["policy-018"]}
+{"record_type":"query","query_id":"q-018-2","query":"What does controltoken018 require?","relevant_document_keys":["policy-018"]}
+{"record_type":"query","query_id":"q-018-3","query":"Find guidance for controltoken018","relevant_document_keys":["policy-018"]}
+{"record_type":"query","query_id":"q-018-4","query":"controltoken018 compliance rule","relevant_document_keys":["policy-018"]}
+{"record_type":"corpus","document_key":"policy-019","title":"Visitor access","content":"Visitor access controltoken019. This controlled policy requires identity verification escort and visit logging. The unique regression identifier is controltoken019."}
+{"record_type":"query","query_id":"q-019-1","query":"controltoken019 policy details","relevant_document_keys":["policy-019"]}
+{"record_type":"query","query_id":"q-019-2","query":"What does controltoken019 require?","relevant_document_keys":["policy-019"]}
+{"record_type":"query","query_id":"q-019-3","query":"Find guidance for controltoken019","relevant_document_keys":["policy-019"]}
+{"record_type":"query","query_id":"q-019-4","query":"controltoken019 compliance rule","relevant_document_keys":["policy-019"]}
+{"record_type":"corpus","document_key":"policy-020","title":"Vulnerability disclosure","content":"Vulnerability disclosure controltoken020. This controlled policy defines intake triage remediation and researcher communication. The unique regression identifier is controltoken020."}
+{"record_type":"query","query_id":"q-020-1","query":"controltoken020 policy details","relevant_document_keys":["policy-020"]}
+{"record_type":"query","query_id":"q-020-2","query":"What does controltoken020 require?","relevant_document_keys":["policy-020"]}
+{"record_type":"query","query_id":"q-020-3","query":"Find guidance for controltoken020","relevant_document_keys":["policy-020"]}
+{"record_type":"query","query_id":"q-020-4","query":"controltoken020 compliance rule","relevant_document_keys":["policy-020"]}
+{"record_type":"corpus","document_key":"policy-021","title":"Patch management","content":"Patch management controltoken021. This controlled policy sets severity based remediation deadlines and exception approval. The unique regression identifier is controltoken021."}
+{"record_type":"query","query_id":"q-021-1","query":"controltoken021 policy details","relevant_document_keys":["policy-021"]}
+{"record_type":"query","query_id":"q-021-2","query":"What does controltoken021 require?","relevant_document_keys":["policy-021"]}
+{"record_type":"query","query_id":"q-021-3","query":"Find guidance for controltoken021","relevant_document_keys":["policy-021"]}
+{"record_type":"query","query_id":"q-021-4","query":"controltoken021 compliance rule","relevant_document_keys":["policy-021"]}
+{"record_type":"corpus","document_key":"policy-022","title":"Business continuity","content":"Business continuity controltoken022. This controlled policy defines critical processes alternate operations and exercise cadence. The unique regression identifier is controltoken022."}
+{"record_type":"query","query_id":"q-022-1","query":"controltoken022 policy details","relevant_document_keys":["policy-022"]}
+{"record_type":"query","query_id":"q-022-2","query":"What does controltoken022 require?","relevant_document_keys":["policy-022"]}
+{"record_type":"query","query_id":"q-022-3","query":"Find guidance for controltoken022","relevant_document_keys":["policy-022"]}
+{"record_type":"query","query_id":"q-022-4","query":"controltoken022 compliance rule","relevant_document_keys":["policy-022"]}
+{"record_type":"corpus","document_key":"policy-023","title":"Disaster recovery","content":"Disaster recovery controltoken023. This controlled policy sets recovery time objectives recovery points and testing. The unique regression identifier is controltoken023."}
+{"record_type":"query","query_id":"q-023-1","query":"controltoken023 policy details","relevant_document_keys":["policy-023"]}
+{"record_type":"query","query_id":"q-023-2","query":"What does controltoken023 require?","relevant_document_keys":["policy-023"]}
+{"record_type":"query","query_id":"q-023-3","query":"Find guidance for controltoken023","relevant_document_keys":["policy-023"]}
+{"record_type":"query","query_id":"q-023-4","query":"controltoken023 compliance rule","relevant_document_keys":["policy-023"]}
+{"record_type":"corpus","document_key":"policy-024","title":"Data deletion","content":"Data deletion controltoken024. This controlled policy defines approved deletion methods evidence and retention exceptions. The unique regression identifier is controltoken024."}
+{"record_type":"query","query_id":"q-024-1","query":"controltoken024 policy details","relevant_document_keys":["policy-024"]}
+{"record_type":"query","query_id":"q-024-2","query":"What does controltoken024 require?","relevant_document_keys":["policy-024"]}
+{"record_type":"query","query_id":"q-024-3","query":"Find guidance for controltoken024","relevant_document_keys":["policy-024"]}
+{"record_type":"query","query_id":"q-024-4","query":"controltoken024 compliance rule","relevant_document_keys":["policy-024"]}
+{"record_type":"corpus","document_key":"policy-025","title":"Legal hold","content":"Legal hold controltoken025. This controlled policy requires preservation notices custodian acknowledgement and release. The unique regression identifier is controltoken025."}
+{"record_type":"query","query_id":"q-025-1","query":"controltoken025 policy details","relevant_document_keys":["policy-025"]}
+{"record_type":"query","query_id":"q-025-2","query":"What does controltoken025 require?","relevant_document_keys":["policy-025"]}
+{"record_type":"query","query_id":"q-025-3","query":"Find guidance for controltoken025","relevant_document_keys":["policy-025"]}
+{"record_type":"query","query_id":"q-025-4","query":"controltoken025 compliance rule","relevant_document_keys":["policy-025"]}
+{"record_type":"corpus","document_key":"policy-026","title":"Privacy requests","content":"Privacy requests controltoken026. This controlled policy defines identity verification response deadlines and audit evidence. The unique regression identifier is controltoken026."}
+{"record_type":"query","query_id":"q-026-1","query":"controltoken026 policy details","relevant_document_keys":["policy-026"]}
+{"record_type":"query","query_id":"q-026-2","query":"What does controltoken026 require?","relevant_document_keys":["policy-026"]}
+{"record_type":"query","query_id":"q-026-3","query":"Find guidance for controltoken026","relevant_document_keys":["policy-026"]}
+{"record_type":"query","query_id":"q-026-4","query":"controltoken026 compliance rule","relevant_document_keys":["policy-026"]}
+{"record_type":"corpus","document_key":"policy-027","title":"Code review","content":"Code review controltoken027. This controlled policy requires independent approval tests and protected branch controls. The unique regression identifier is controltoken027."}
+{"record_type":"query","query_id":"q-027-1","query":"controltoken027 policy details","relevant_document_keys":["policy-027"]}
+{"record_type":"query","query_id":"q-027-2","query":"What does controltoken027 require?","relevant_document_keys":["policy-027"]}
+{"record_type":"query","query_id":"q-027-3","query":"Find guidance for controltoken027","relevant_document_keys":["policy-027"]}
+{"record_type":"query","query_id":"q-027-4","query":"controltoken027 compliance rule","relevant_document_keys":["policy-027"]}
+{"record_type":"corpus","document_key":"policy-028","title":"Release approval","content":"Release approval controltoken028. This controlled policy defines production readiness evidence risk acceptance and signoff. The unique regression identifier is controltoken028."}
+{"record_type":"query","query_id":"q-028-1","query":"controltoken028 policy details","relevant_document_keys":["policy-028"]}
+{"record_type":"query","query_id":"q-028-2","query":"What does controltoken028 require?","relevant_document_keys":["policy-028"]}
+{"record_type":"query","query_id":"q-028-3","query":"Find guidance for controltoken028","relevant_document_keys":["policy-028"]}
+{"record_type":"query","query_id":"q-028-4","query":"controltoken028 compliance rule","relevant_document_keys":["policy-028"]}
+{"record_type":"corpus","document_key":"policy-029","title":"Production access","content":"Production access controltoken029. This controlled policy requires least privilege time bounds and logged approval. The unique regression identifier is controltoken029."}
+{"record_type":"query","query_id":"q-029-1","query":"controltoken029 policy details","relevant_document_keys":["policy-029"]}
+{"record_type":"query","query_id":"q-029-2","query":"What does controltoken029 require?","relevant_document_keys":["policy-029"]}
+{"record_type":"query","query_id":"q-029-3","query":"Find guidance for controltoken029","relevant_document_keys":["policy-029"]}
+{"record_type":"query","query_id":"q-029-4","query":"controltoken029 compliance rule","relevant_document_keys":["policy-029"]}
+{"record_type":"corpus","document_key":"policy-030","title":"Logging retention","content":"Logging retention controltoken030. This controlled policy sets security log sources retention periods and access controls. The unique regression identifier is controltoken030."}
+{"record_type":"query","query_id":"q-030-1","query":"controltoken030 policy details","relevant_document_keys":["policy-030"]}
+{"record_type":"query","query_id":"q-030-2","query":"What does controltoken030 require?","relevant_document_keys":["policy-030"]}
+{"record_type":"query","query_id":"q-030-3","query":"Find guidance for controltoken030","relevant_document_keys":["policy-030"]}
+{"record_type":"query","query_id":"q-030-4","query":"controltoken030 compliance rule","relevant_document_keys":["policy-030"]}
+{"record_type":"corpus","document_key":"policy-031","title":"Secrets management","content":"Secrets management controltoken031. This controlled policy requires vault storage rotation scanning and incident response. The unique regression identifier is controltoken031."}
+{"record_type":"query","query_id":"q-031-1","query":"controltoken031 policy details","relevant_document_keys":["policy-031"]}
+{"record_type":"query","query_id":"q-031-2","query":"What does controltoken031 require?","relevant_document_keys":["policy-031"]}
+{"record_type":"query","query_id":"q-031-3","query":"Find guidance for controltoken031","relevant_document_keys":["policy-031"]}
+{"record_type":"query","query_id":"q-031-4","query":"controltoken031 compliance rule","relevant_document_keys":["policy-031"]}
+{"record_type":"corpus","document_key":"policy-032","title":"Open source","content":"Open source controltoken032. This controlled policy defines license review attribution and vulnerability monitoring. The unique regression identifier is controltoken032."}
+{"record_type":"query","query_id":"q-032-1","query":"controltoken032 policy details","relevant_document_keys":["policy-032"]}
+{"record_type":"query","query_id":"q-032-2","query":"What does controltoken032 require?","relevant_document_keys":["policy-032"]}
+{"record_type":"query","query_id":"q-032-3","query":"Find guidance for controltoken032","relevant_document_keys":["policy-032"]}
+{"record_type":"query","query_id":"q-032-4","query":"controltoken032 compliance rule","relevant_document_keys":["policy-032"]}
+{"record_type":"corpus","document_key":"policy-033","title":"Third party risk","content":"Third party risk controltoken033. This controlled policy requires inherent risk scoring assessment and ongoing monitoring. The unique regression identifier is controltoken033."}
+{"record_type":"query","query_id":"q-033-1","query":"controltoken033 policy details","relevant_document_keys":["policy-033"]}
+{"record_type":"query","query_id":"q-033-2","query":"What does controltoken033 require?","relevant_document_keys":["policy-033"]}
+{"record_type":"query","query_id":"q-033-3","query":"Find guidance for controltoken033","relevant_document_keys":["policy-033"]}
+{"record_type":"query","query_id":"q-033-4","query":"controltoken033 compliance rule","relevant_document_keys":["policy-033"]}
+{"record_type":"corpus","document_key":"policy-034","title":"Employee offboarding","content":"Employee offboarding controltoken034. This controlled policy requires timely access removal asset return and data transfer. The unique regression identifier is controltoken034."}
+{"record_type":"query","query_id":"q-034-1","query":"controltoken034 policy details","relevant_document_keys":["policy-034"]}
+{"record_type":"query","query_id":"q-034-2","query":"What does controltoken034 require?","relevant_document_keys":["policy-034"]}
+{"record_type":"query","query_id":"q-034-3","query":"Find guidance for controltoken034","relevant_document_keys":["policy-034"]}
+{"record_type":"query","query_id":"q-034-4","query":"controltoken034 compliance rule","relevant_document_keys":["policy-034"]}
+{"record_type":"corpus","document_key":"policy-035","title":"Employee onboarding","content":"Employee onboarding controltoken035. This controlled policy defines identity verification training and least privilege setup. The unique regression identifier is controltoken035."}
+{"record_type":"query","query_id":"q-035-1","query":"controltoken035 policy details","relevant_document_keys":["policy-035"]}
+{"record_type":"query","query_id":"q-035-2","query":"What does controltoken035 require?","relevant_document_keys":["policy-035"]}
+{"record_type":"query","query_id":"q-035-3","query":"Find guidance for controltoken035","relevant_document_keys":["policy-035"]}
+{"record_type":"query","query_id":"q-035-4","query":"controltoken035 compliance rule","relevant_document_keys":["policy-035"]}
+{"record_type":"corpus","document_key":"policy-036","title":"Expense reimbursement","content":"Expense reimbursement controltoken036. This controlled policy sets submission deadlines eligible costs and approval evidence. The unique regression identifier is controltoken036."}
+{"record_type":"query","query_id":"q-036-1","query":"controltoken036 policy details","relevant_document_keys":["policy-036"]}
+{"record_type":"query","query_id":"q-036-2","query":"What does controltoken036 require?","relevant_document_keys":["policy-036"]}
+{"record_type":"query","query_id":"q-036-3","query":"Find guidance for controltoken036","relevant_document_keys":["policy-036"]}
+{"record_type":"query","query_id":"q-036-4","query":"controltoken036 compliance rule","relevant_document_keys":["policy-036"]}
+{"record_type":"corpus","document_key":"policy-037","title":"Benefits enrollment","content":"Benefits enrollment controltoken037. This controlled policy defines election windows qualifying events and documentation. The unique regression identifier is controltoken037."}
+{"record_type":"query","query_id":"q-037-1","query":"controltoken037 policy details","relevant_document_keys":["policy-037"]}
+{"record_type":"query","query_id":"q-037-2","query":"What does controltoken037 require?","relevant_document_keys":["policy-037"]}
+{"record_type":"query","query_id":"q-037-3","query":"Find guidance for controltoken037","relevant_document_keys":["policy-037"]}
+{"record_type":"query","query_id":"q-037-4","query":"controltoken037 compliance rule","relevant_document_keys":["policy-037"]}
+{"record_type":"corpus","document_key":"policy-038","title":"Performance reviews","content":"Performance reviews controltoken038. This controlled policy sets review cadence calibration feedback and record handling. The unique regression identifier is controltoken038."}
+{"record_type":"query","query_id":"q-038-1","query":"controltoken038 policy details","relevant_document_keys":["policy-038"]}
+{"record_type":"query","query_id":"q-038-2","query":"What does controltoken038 require?","relevant_document_keys":["policy-038"]}
+{"record_type":"query","query_id":"q-038-3","query":"Find guidance for controltoken038","relevant_document_keys":["policy-038"]}
+{"record_type":"query","query_id":"q-038-4","query":"controltoken038 compliance rule","relevant_document_keys":["policy-038"]}
+{"record_type":"corpus","document_key":"policy-039","title":"Training compliance","content":"Training compliance controltoken039. This controlled policy requires assigned courses deadlines and escalation for overdue work. The unique regression identifier is controltoken039."}
+{"record_type":"query","query_id":"q-039-1","query":"controltoken039 policy details","relevant_document_keys":["policy-039"]}
+{"record_type":"query","query_id":"q-039-2","query":"What does controltoken039 require?","relevant_document_keys":["policy-039"]}
+{"record_type":"query","query_id":"q-039-3","query":"Find guidance for controltoken039","relevant_document_keys":["policy-039"]}
+{"record_type":"query","query_id":"q-039-4","query":"controltoken039 compliance rule","relevant_document_keys":["policy-039"]}
+{"record_type":"corpus","document_key":"policy-040","title":"Export controls","content":"Export controls controltoken040. This controlled policy requires classification screening licensing and record keeping. The unique regression identifier is controltoken040."}
+{"record_type":"query","query_id":"q-040-1","query":"controltoken040 policy details","relevant_document_keys":["policy-040"]}
+{"record_type":"query","query_id":"q-040-2","query":"What does controltoken040 require?","relevant_document_keys":["policy-040"]}
+{"record_type":"query","query_id":"q-040-3","query":"Find guidance for controltoken040","relevant_document_keys":["policy-040"]}
+{"record_type":"query","query_id":"q-040-4","query":"controltoken040 compliance rule","relevant_document_keys":["policy-040"]}
+{"record_type":"corpus","document_key":"policy-041","title":"Sanctions screening","content":"Sanctions screening controltoken041. This controlled policy defines screening frequency match review and escalation. The unique regression identifier is controltoken041."}
+{"record_type":"query","query_id":"q-041-1","query":"controltoken041 policy details","relevant_document_keys":["policy-041"]}
+{"record_type":"query","query_id":"q-041-2","query":"What does controltoken041 require?","relevant_document_keys":["policy-041"]}
+{"record_type":"query","query_id":"q-041-3","query":"Find guidance for controltoken041","relevant_document_keys":["policy-041"]}
+{"record_type":"query","query_id":"q-041-4","query":"controltoken041 compliance rule","relevant_document_keys":["policy-041"]}
+{"record_type":"corpus","document_key":"policy-042","title":"Customer support","content":"Customer support controltoken042. This controlled policy sets ticket priority response targets and escalation paths. The unique regression identifier is controltoken042."}
+{"record_type":"query","query_id":"q-042-1","query":"controltoken042 policy details","relevant_document_keys":["policy-042"]}
+{"record_type":"query","query_id":"q-042-2","query":"What does controltoken042 require?","relevant_document_keys":["policy-042"]}
+{"record_type":"query","query_id":"q-042-3","query":"Find guidance for controltoken042","relevant_document_keys":["policy-042"]}
+{"record_type":"query","query_id":"q-042-4","query":"controltoken042 compliance rule","relevant_document_keys":["policy-042"]}
+{"record_type":"corpus","document_key":"policy-043","title":"Service credits","content":"Service credits controltoken043. This controlled policy defines eligibility calculations claim windows and exclusions. The unique regression identifier is controltoken043."}
+{"record_type":"query","query_id":"q-043-1","query":"controltoken043 policy details","relevant_document_keys":["policy-043"]}
+{"record_type":"query","query_id":"q-043-2","query":"What does controltoken043 require?","relevant_document_keys":["policy-043"]}
+{"record_type":"query","query_id":"q-043-3","query":"Find guidance for controltoken043","relevant_document_keys":["policy-043"]}
+{"record_type":"query","query_id":"q-043-4","query":"controltoken043 compliance rule","relevant_document_keys":["policy-043"]}
+{"record_type":"corpus","document_key":"policy-044","title":"Capacity planning","content":"Capacity planning controltoken044. This controlled policy requires demand forecasts headroom targets and review cadence. The unique regression identifier is controltoken044."}
+{"record_type":"query","query_id":"q-044-1","query":"controltoken044 policy details","relevant_document_keys":["policy-044"]}
+{"record_type":"query","query_id":"q-044-2","query":"What does controltoken044 require?","relevant_document_keys":["policy-044"]}
+{"record_type":"query","query_id":"q-044-3","query":"Find guidance for controltoken044","relevant_document_keys":["policy-044"]}
+{"record_type":"query","query_id":"q-044-4","query":"controltoken044 compliance rule","relevant_document_keys":["policy-044"]}
+{"record_type":"corpus","document_key":"policy-045","title":"On call","content":"On call controltoken045. This controlled policy defines rotation handoff acknowledgement and escalation duties. The unique regression identifier is controltoken045."}
+{"record_type":"query","query_id":"q-045-1","query":"controltoken045 policy details","relevant_document_keys":["policy-045"]}
+{"record_type":"query","query_id":"q-045-2","query":"What does controltoken045 require?","relevant_document_keys":["policy-045"]}
+{"record_type":"query","query_id":"q-045-3","query":"Find guidance for controltoken045","relevant_document_keys":["policy-045"]}
+{"record_type":"query","query_id":"q-045-4","query":"controltoken045 compliance rule","relevant_document_keys":["policy-045"]}
+{"record_type":"corpus","document_key":"policy-046","title":"Incident postmortem","content":"Incident postmortem controltoken046. This controlled policy requires blameless analysis action owners and follow up. The unique regression identifier is controltoken046."}
+{"record_type":"query","query_id":"q-046-1","query":"controltoken046 policy details","relevant_document_keys":["policy-046"]}
+{"record_type":"query","query_id":"q-046-2","query":"What does controltoken046 require?","relevant_document_keys":["policy-046"]}
+{"record_type":"query","query_id":"q-046-3","query":"Find guidance for controltoken046","relevant_document_keys":["policy-046"]}
+{"record_type":"query","query_id":"q-046-4","query":"controltoken046 compliance rule","relevant_document_keys":["policy-046"]}
+{"record_type":"corpus","document_key":"policy-047","title":"Database migration","content":"Database migration controltoken047. This controlled policy requires compatibility testing backups validation and rollback. The unique regression identifier is controltoken047."}
+{"record_type":"query","query_id":"q-047-1","query":"controltoken047 policy details","relevant_document_keys":["policy-047"]}
+{"record_type":"query","query_id":"q-047-2","query":"What does controltoken047 require?","relevant_document_keys":["policy-047"]}
+{"record_type":"query","query_id":"q-047-3","query":"Find guidance for controltoken047","relevant_document_keys":["policy-047"]}
+{"record_type":"query","query_id":"q-047-4","query":"controltoken047 compliance rule","relevant_document_keys":["policy-047"]}
+{"record_type":"corpus","document_key":"policy-048","title":"API deprecation","content":"API deprecation controltoken048. This controlled policy defines notice periods migration guidance and removal criteria. The unique regression identifier is controltoken048."}
+{"record_type":"query","query_id":"q-048-1","query":"controltoken048 policy details","relevant_document_keys":["policy-048"]}
+{"record_type":"query","query_id":"q-048-2","query":"What does controltoken048 require?","relevant_document_keys":["policy-048"]}
+{"record_type":"query","query_id":"q-048-3","query":"Find guidance for controltoken048","relevant_document_keys":["policy-048"]}
+{"record_type":"query","query_id":"q-048-4","query":"controltoken048 compliance rule","relevant_document_keys":["policy-048"]}
+{"record_type":"corpus","document_key":"policy-049","title":"Model risk","content":"Model risk controltoken049. This controlled policy requires validation monitoring approvals and documented limitations. The unique regression identifier is controltoken049."}
+{"record_type":"query","query_id":"q-049-1","query":"controltoken049 policy details","relevant_document_keys":["policy-049"]}
+{"record_type":"query","query_id":"q-049-2","query":"What does controltoken049 require?","relevant_document_keys":["policy-049"]}
+{"record_type":"query","query_id":"q-049-3","query":"Find guidance for controltoken049","relevant_document_keys":["policy-049"]}
+{"record_type":"query","query_id":"q-049-4","query":"controltoken049 compliance rule","relevant_document_keys":["policy-049"]}
+{"record_type":"corpus","document_key":"policy-050","title":"AI usage","content":"AI usage controltoken050. This controlled policy defines approved data handling human review and prohibited decisions. The unique regression identifier is controltoken050."}
+{"record_type":"query","query_id":"q-050-1","query":"controltoken050 policy details","relevant_document_keys":["policy-050"]}
+{"record_type":"query","query_id":"q-050-2","query":"What does controltoken050 require?","relevant_document_keys":["policy-050"]}
+{"record_type":"query","query_id":"q-050-3","query":"Find guidance for controltoken050","relevant_document_keys":["policy-050"]}
+{"record_type":"query","query_id":"q-050-4","query":"controltoken050 compliance rule","relevant_document_keys":["policy-050"]}

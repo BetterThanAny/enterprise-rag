@@ -1,0 +1,61 @@
+{"type":"metadata","version":"m4-controlled-grounding-v1","kind":"controlled_synthetic_grounding","description":"Fixed synthetic citation and abstention regression set; not production truth."}
+{"type":"corpus","document_key":"g000","content":"generationtoken000 policy evidence confirms controlled answer 000"}
+{"type":"corpus","document_key":"g001","content":"generationtoken001 policy evidence confirms controlled answer 001"}
+{"type":"corpus","document_key":"g002","content":"generationtoken002 policy evidence confirms controlled answer 002"}
+{"type":"corpus","document_key":"g003","content":"generationtoken003 policy evidence confirms controlled answer 003"}
+{"type":"corpus","document_key":"g004","content":"generationtoken004 policy evidence confirms controlled answer 004"}
+{"type":"corpus","document_key":"g005","content":"generationtoken005 policy evidence confirms controlled answer 005"}
+{"type":"corpus","document_key":"g006","content":"generationtoken006 policy evidence confirms controlled answer 006"}
+{"type":"corpus","document_key":"g007","content":"generationtoken007 policy evidence confirms controlled answer 007"}
+{"type":"corpus","document_key":"g008","content":"generationtoken008 policy evidence confirms controlled answer 008"}
+{"type":"corpus","document_key":"g009","content":"generationtoken009 policy evidence confirms controlled answer 009"}
+{"type":"corpus","document_key":"g010","content":"generationtoken010 policy evidence confirms controlled answer 010"}
+{"type":"corpus","document_key":"g011","content":"generationtoken011 policy evidence confirms controlled answer 011"}
+{"type":"corpus","document_key":"g012","content":"generationtoken012 policy evidence confirms controlled answer 012"}
+{"type":"corpus","document_key":"g013","content":"generationtoken013 policy evidence confirms controlled answer 013"}
+{"type":"corpus","document_key":"g014","content":"generationtoken014 policy evidence confirms controlled answer 014"}
+{"type":"corpus","document_key":"g015","content":"generationtoken015 policy evidence confirms controlled answer 015"}
+{"type":"corpus","document_key":"g016","content":"generationtoken016 policy evidence confirms controlled answer 016"}
+{"type":"corpus","document_key":"g017","content":"generationtoken017 policy evidence confirms controlled answer 017"}
+{"type":"corpus","document_key":"g018","content":"generationtoken018 policy evidence confirms controlled answer 018"}
+{"type":"corpus","document_key":"g019","content":"generationtoken019 policy evidence confirms controlled answer 019"}
+{"type":"query","query_id":"answer-000","kind":"answer","query":"generationtoken000","relevant_document_keys":["g000"]}
+{"type":"query","query_id":"answer-001","kind":"answer","query":"generationtoken001","relevant_document_keys":["g001"]}
+{"type":"query","query_id":"answer-002","kind":"answer","query":"generationtoken002","relevant_document_keys":["g002"]}
+{"type":"query","query_id":"answer-003","kind":"answer","query":"generationtoken003","relevant_document_keys":["g003"]}
+{"type":"query","query_id":"answer-004","kind":"answer","query":"generationtoken004","relevant_document_keys":["g004"]}
+{"type":"query","query_id":"answer-005","kind":"answer","query":"generationtoken005","relevant_document_keys":["g005"]}
+{"type":"query","query_id":"answer-006","kind":"answer","query":"generationtoken006","relevant_document_keys":["g006"]}
+{"type":"query","query_id":"answer-007","kind":"answer","query":"generationtoken007","relevant_document_keys":["g007"]}
+{"type":"query","query_id":"answer-008","kind":"answer","query":"generationtoken008","relevant_document_keys":["g008"]}
+{"type":"query","query_id":"answer-009","kind":"answer","query":"generationtoken009","relevant_document_keys":["g009"]}
+{"type":"query","query_id":"answer-010","kind":"answer","query":"generationtoken010","relevant_document_keys":["g010"]}
+{"type":"query","query_id":"answer-011","kind":"answer","query":"generationtoken011","relevant_document_keys":["g011"]}
+{"type":"query","query_id":"answer-012","kind":"answer","query":"generationtoken012","relevant_document_keys":["g012"]}
+{"type":"query","query_id":"answer-013","kind":"answer","query":"generationtoken013","relevant_document_keys":["g013"]}
+{"type":"query","query_id":"answer-014","kind":"answer","query":"generationtoken014","relevant_document_keys":["g014"]}
+{"type":"query","query_id":"answer-015","kind":"answer","query":"generationtoken015","relevant_document_keys":["g015"]}
+{"type":"query","query_id":"answer-016","kind":"answer","query":"generationtoken016","relevant_document_keys":["g016"]}
+{"type":"query","query_id":"answer-017","kind":"answer","query":"generationtoken017","relevant_document_keys":["g017"]}
+{"type":"query","query_id":"answer-018","kind":"answer","query":"generationtoken018","relevant_document_keys":["g018"]}
+{"type":"query","query_id":"answer-019","kind":"answer","query":"generationtoken019","relevant_document_keys":["g019"]}
+{"type":"query","query_id":"abstain-000","kind":"abstain","query":"absentgenerationtoken000","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-001","kind":"abstain","query":"absentgenerationtoken001","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-002","kind":"abstain","query":"absentgenerationtoken002","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-003","kind":"abstain","query":"absentgenerationtoken003","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-004","kind":"abstain","query":"absentgenerationtoken004","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-005","kind":"abstain","query":"absentgenerationtoken005","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-006","kind":"abstain","query":"absentgenerationtoken006","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-007","kind":"abstain","query":"absentgenerationtoken007","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-008","kind":"abstain","query":"absentgenerationtoken008","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-009","kind":"abstain","query":"absentgenerationtoken009","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-010","kind":"abstain","query":"absentgenerationtoken010","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-011","kind":"abstain","query":"absentgenerationtoken011","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-012","kind":"abstain","query":"absentgenerationtoken012","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-013","kind":"abstain","query":"absentgenerationtoken013","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-014","kind":"abstain","query":"absentgenerationtoken014","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-015","kind":"abstain","query":"absentgenerationtoken015","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-016","kind":"abstain","query":"absentgenerationtoken016","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-017","kind":"abstain","query":"absentgenerationtoken017","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-018","kind":"abstain","query":"absentgenerationtoken018","relevant_document_keys":[]}
+{"type":"query","query_id":"abstain-019","kind":"abstain","query":"absentgenerationtoken019","relevant_document_keys":[]}

@@ -1,0 +1,35 @@
+{
+  "client_latency_ms": {
+    "p50": 106.783,
+    "p95": 200.356,
+    "p99": 249.849
+  },
+  "configuration": {
+    "concurrency": 20,
+    "embedding_version": "deterministic-sha256-v1",
+    "llm_included": false,
+    "mode": "hybrid",
+    "requests": 200,
+    "rerank": true,
+    "retriever_version": "postgres-fts-pgvector-rrf-v1"
+  },
+  "dataset": {
+    "chunks": 50000,
+    "generator_sha256": "8c708a8b7213ac8fb22420e6bc42ee6367e2f24f65118960a6f38ae6cd2f7af9",
+    "version": "m5-deterministic-load-v1"
+  },
+  "quality_gate": {
+    "maximum_p95_ms": 500.0,
+    "observed_p95_ms": 200.356,
+    "status": "passed"
+  },
+  "run_at": "2026-07-16T14:56:01.448487+00:00",
+  "seeding": {
+    "seconds": 29.37
+  },
+  "server_retrieval_latency_ms": {
+    "p50": 26.269,
+    "p95": 38.091,
+    "p99": 45.514
+  }
+}

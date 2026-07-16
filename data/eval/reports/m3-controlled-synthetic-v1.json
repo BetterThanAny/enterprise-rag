@@ -1,0 +1,67 @@
+{
+  "comparisons": {
+    "hybrid_vs_dense_ndcg_at_10": {
+      "relative_delta": 6.9948967057509766,
+      "status": "verified_improvement",
+      "threshold": 0.05
+    },
+    "rerank_vs_hybrid_mrr_at_10": {
+      "relative_delta": 0.042936559992329974,
+      "status": "non_finding_below_threshold",
+      "threshold": 0.05
+    }
+  },
+  "configuration": {
+    "candidate_k": 50,
+    "embedding_version": "deterministic-sha256-v1",
+    "reranker_version": "flashrank:ms-marco-TinyBERT-L-2-v2",
+    "retriever_version": "postgres-fts-pgvector-rrf-v1",
+    "rrf_rank_constant": 60
+  },
+  "dataset": {
+    "corpus_documents": 50,
+    "description": "Fixed synthetic retrieval regression set with explicit labels. It is not human-labeled production relevance truth.",
+    "human_labeled": false,
+    "kind": "controlled_synthetic_regression",
+    "labeled_queries": 200,
+    "llm_judge": false,
+    "sha256": "696410c2218c625deceb8481bc6acf31f9ee5ee70f1a04929ff18d9e7256d169",
+    "version": "m3-controlled-synthetic-v1"
+  },
+  "metrics": {
+    "dense": {
+      "latency_ms_p50": 1.216,
+      "latency_ms_p95": 2.832,
+      "mrr_at_10": 0.055782,
+      "ndcg_at_10": 0.08955,
+      "recall_at_5": 0.095
+    },
+    "hybrid": {
+      "latency_ms_p50": 2.252,
+      "latency_ms_p95": 3.828,
+      "mrr_at_10": 0.657109,
+      "ndcg_at_10": 0.715943,
+      "recall_at_5": 0.815
+    },
+    "hybrid_rerank": {
+      "latency_ms_p50": 14.929,
+      "latency_ms_p95": 23.472,
+      "mrr_at_10": 0.685323,
+      "ndcg_at_10": 0.746053,
+      "recall_at_5": 0.865
+    },
+    "lexical": {
+      "latency_ms_p50": 0.594,
+      "latency_ms_p95": 2.277,
+      "mrr_at_10": 1.0,
+      "ndcg_at_10": 1.0,
+      "recall_at_5": 1.0
+    }
+  },
+  "quality_gate": {
+    "hybrid_rerank_recall_at_5": 0.865,
+    "minimum": 0.85,
+    "status": "passed"
+  },
+  "run_at": "2026-07-16T14:54:58.669587+00:00"
+}

@@ -1,0 +1,62 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      POSTGRES_DB: enterprise_rag
+      POSTGRES_USER: enterprise_rag
+      POSTGRES_PASSWORD: ci-only-postgres-password
+      DATABASE_URL: postgresql+psycopg://enterprise_rag:ci-only-postgres-password@postgres:5432/enterprise_rag
+      TEST_DATABASE_URL: postgresql+psycopg://enterprise_rag:ci-only-postgres-password@127.0.0.1:15432/enterprise_rag
+      TEST_REDIS_URL: redis://127.0.0.1:16379/0
+      TEST_MINIO_ENDPOINT: 127.0.0.1:19000
+      TEST_MINIO_ACCESS_KEY: ci-only-minio-access
+      TEST_MINIO_SECRET_KEY: ci-only-minio-secret-password
+      TEST_MINIO_BUCKET: enterprise-rag-documents
+      REDIS_URL: redis://127.0.0.1:16379/0
+      MINIO_ENDPOINT: 127.0.0.1:19000
+      MINIO_ACCESS_KEY: ci-only-minio-access
+      MINIO_SECRET_KEY: ci-only-minio-secret-password
+      MINIO_BUCKET: enterprise-rag-documents
+      JWT_SECRET: ci-only-jwt-secret-with-more-than-32-characters
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
+        with:
+          version: 2026.7.5
+          install: true
+      - name: Install locked project dependencies
+        run: mise exec -- uv sync --frozen
+      - name: Start stateful test dependencies
+        run: docker compose up -d postgres redis minio minio-init --wait
+      - name: Migrate test database
+        env:
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+        run: mise exec -- uv run alembic upgrade head
+      - name: Lint and strict type check
+        run: |
+          mise exec -- uv run ruff check .
+          mise exec -- uv run pyright
+      - name: Unit tests
+        run: mise exec -- uv run pytest -q tests/unit
+      - name: Integration and security tests
+        run: |
+          mise exec -- uv run pytest -q tests/integration
+          mise exec -- uv run pytest -q tests/security
+      - name: Small deterministic quality regression
+        env:
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+        run: >-
+          mise exec -- uv run python scripts/evaluate_generation.py
+          --dataset data/eval/generation.jsonl
+          --output /tmp/m4-ci-quality.json

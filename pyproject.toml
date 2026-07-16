@@ -1,0 +1,78 @@
+[project]
+name = "enterprise-rag"
+version = "0.1.0"
+description = "Multi-tenant enterprise RAG knowledge base"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "alembic>=1.16,<2",
+    "dramatiq[redis]>=2.2,<3",
+    "email-validator>=2.2,<3",
+    "fastapi>=0.116,<1",
+    "flashrank>=0.2,<1",
+    "greenlet>=3.2,<4",
+    "httpx>=0.28,<1",
+    "minio>=7.2,<8",
+    "opentelemetry-api>=1.37,<2",
+    "opentelemetry-exporter-otlp-proto-http>=1.37,<2",
+    "opentelemetry-sdk>=1.37,<2",
+    "pgvector>=0.4,<1",
+    "prometheus-client>=0.22,<1",
+    "psycopg[binary,pool]>=3.2,<4",
+    "pwdlib[argon2]>=0.2,<1",
+    "pydantic-settings>=2.10,<3",
+    "pyjwt>=2.10,<3",
+    "pymupdf>=1.26,<2",
+    "python-multipart>=0.0.20,<1",
+    "redis>=6.2,<7",
+    "sqlalchemy>=2.0.41,<3",
+    "uvicorn[standard]>=0.35,<1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = [
+  "apps/api/enterprise_rag_api",
+  "apps/worker/enterprise_rag_worker",
+  "packages/core/enterprise_rag_core",
+]
+
+[tool.pytest.ini_options]
+addopts = "--strict-config --strict-markers"
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = [
+  "integration: requires PostgreSQL, Redis, and MinIO",
+  "security: exercises authorization and tenant-isolation boundaries",
+  "fault: terminates worker processes and requires PostgreSQL, Redis, and MinIO",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["apps/api", "apps/worker", "packages/core", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC", "S", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "S106"]
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "strict"
+include = ["apps", "packages", "scripts", "tests"]
+exclude = [".venv", "alembic/versions"]
+reportMissingTypeStubs = "none"
+
+[dependency-groups]
+dev = [
+    "asgi-lifespan>=2.1,<3",
+    "pyright>=1.1.403,<2",
+    "pytest>=8.4,<9",
+    "pytest-asyncio>=1.0,<2",
+    "ruff>=0.12,<1",
+]

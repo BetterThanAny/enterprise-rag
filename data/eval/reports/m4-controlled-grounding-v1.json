@@ -1,0 +1,32 @@
+{
+  "configuration": {
+    "embedding_version": "deterministic-sha256-v1",
+    "model": "deterministic-grounded-answer-v1",
+    "prompt_version": "grounded-citations-v1",
+    "provider": "deterministic",
+    "reranker_version": null,
+    "retriever_version": "postgres-fts-pgvector-rrf-v1"
+  },
+  "dataset": {
+    "abstention_samples": 20,
+    "answer_samples": 20,
+    "corpus_documents": 20,
+    "human_labeled": false,
+    "kind": "controlled_synthetic_grounding",
+    "llm_judge": false,
+    "sha256": "65569bb3d04dcba897a841eb9567aa413d37a28514260c9e0e8e22ce95ba0a33",
+    "version": "m4-controlled-grounding-v1"
+  },
+  "metrics": {
+    "abstention_accuracy": 1.0,
+    "citation_accuracy": 1.0,
+    "citation_correct_samples": 20,
+    "correct_abstentions": 20
+  },
+  "quality_gate": {
+    "abstention_status": "passed",
+    "citation_status": "passed",
+    "minimum": 0.9
+  },
+  "run_at": "2026-07-16T14:54:59.765493+00:00"
+}
