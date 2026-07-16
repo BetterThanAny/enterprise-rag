@@ -774,9 +774,29 @@ warning 与 Rerank MRR 未达 5% 改善阈值继续记录为 **non-finding**。
 
 M1--M5 的全部必需退出条件均为 **verified**，没有 **failed** 或 **unverified** 项。
 真实付费 OpenAI/DeepSeek、本地 Ollama、外部 OTLP collector、独立 `llm-eval-platform`
-hosted evaluator 和 GitHub-hosted CI 仍为非门禁的 **unverified** 外部路径，原因分别是未提供
-凭据/模型/collector、外部评测项目保持独立，以及尚未 push。PyMuPDF 5 条第三方 warning
-和 Rerank MRR 未达到 5% 改善阈值为 **non-finding**。
+hosted evaluator 仍为非门禁的 **unverified** 外部路径，原因分别是未提供凭据/模型/collector，
+以及外部评测项目保持独立。PyMuPDF 5 条第三方 warning 和 Rerank MRR 未达到 5% 改善
+阈值为 **non-finding**。
+
+#### GitHub 发布验证（2026-07-16 23:10 CST）
+
+仓库已作为 public repository 发布到 `BetterThanAny/enterprise-rag`。首次 GitHub Actions
+run `29509631260` 在 `Start stateful test dependencies` 步骤失败：GitHub Runner 的 Compose
+将正常 exit 0 的一次性 `minio-init` 服务视为 `--wait` 的失败目标，迁移和测试尚未开始。
+
+本轮按 regression-first 修复并验证：
+
+| 命令 | 结果 |
+|---|---|
+| `pytest -q tests/unit/test_project_delivery.py`（修复前） | 1 failed、1 passed；新测试准确复现 CI 命令结构缺口 |
+| `docker compose up -d --wait postgres redis minio` + `docker compose run --rm --no-deps minio-init` | 在独立 `enterprise-rag-ci-regression` project 上通过；三项长期服务 healthy，bucket 创建成功 |
+| `pytest -q tests/unit/test_project_delivery.py`（修复后） | 2 passed、0 skipped |
+| 注入真实主栈 `TEST_*` 后运行 `pytest -q -ra` | 86 passed、0 skipped；5 条 PyMuPDF warning |
+| `ruff check .` / `pyright` / CI YAML parse / `git diff --check` / 变更文件 gitleaks | 全部通过；0 lint/type/secret findings |
+| GitHub Actions run `29509872757` | **verified / success**；依赖启动、迁移、lint/type、unit、integration/security 和确定性质量回归全部通过 |
+
+因此 GitHub-hosted CI 已从 **unverified** 更新为 **verified**。首次失败属于已修复的交付配置
+缺口，不改变 M1--M5 功能验收结果。
 
 ## 6. 总体验收标准
 
