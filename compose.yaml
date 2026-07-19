@@ -61,6 +61,31 @@ services:
         mc alias set local http://minio:9000 "$${MINIO_ACCESS_KEY}" "$${MINIO_SECRET_KEY}"
         mc mb --ignore-existing "local/$${MINIO_BUCKET}"
 
+  ollama:
+    profiles: ["local-llm"]
+    image: ollama/ollama:0.30.8
+    ports:
+      - "127.0.0.1:${OLLAMA_PORT:-11434}:11434"
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 3s
+      timeout: 5s
+      retries: 60
+    volumes:
+      - ollama-data:/root/.ollama
+
+  ollama-init:
+    profiles: ["local-llm"]
+    image: ollama/ollama:0.30.8
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5:0.5b}
+    entrypoint: ["/bin/sh", "-ec"]
+    command: ["ollama pull \"$${OLLAMA_MODEL}\""]
+
   migrate:
     build:
       context: .
@@ -91,6 +116,10 @@ services:
       GIT_SHA: ${GIT_SHA:-unknown}
       RETRIEVAL_RRF_RANK_CONSTANT: ${RETRIEVAL_RRF_RANK_CONSTANT:-60}
       RETRIEVAL_CONFIG_VERSION: ${RETRIEVAL_CONFIG_VERSION:-postgres-fts-pgvector-rrf-v1}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-deterministic}
+      FASTEMBED_MODEL_NAME: ${FASTEMBED_MODEL_NAME:-BAAI/bge-small-en-v1.5}
+      FASTEMBED_CACHE_DIR: ${FASTEMBED_CACHE_DIR:-~/.cache/enterprise-rag/fastembed}
+      FASTEMBED_BATCH_SIZE: ${FASTEMBED_BATCH_SIZE:-64}
       RERANKER_PROVIDER: ${RERANKER_PROVIDER:-deterministic}
       RERANKER_MODEL_NAME: ${RERANKER_MODEL_NAME:-ms-marco-TinyBERT-L-2-v2}
       RERANKER_CACHE_DIR: ${RERANKER_CACHE_DIR:-~/.cache/enterprise-rag/flashrank}
@@ -157,6 +186,10 @@ services:
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
       GIT_SHA: ${GIT_SHA:-unknown}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-deterministic}
+      FASTEMBED_MODEL_NAME: ${FASTEMBED_MODEL_NAME:-BAAI/bge-small-en-v1.5}
+      FASTEMBED_CACHE_DIR: ${FASTEMBED_CACHE_DIR:-~/.cache/enterprise-rag/fastembed}
+      FASTEMBED_BATCH_SIZE: ${FASTEMBED_BATCH_SIZE:-64}
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -174,3 +207,4 @@ volumes:
   postgres-data:
   redis-data:
   minio-data:
+  ollama-data:

@@ -1,8 +1,8 @@
 {
   "client_latency_ms": {
-    "p50": 106.783,
-    "p95": 200.356,
-    "p99": 249.849
+    "p50": 109.014,
+    "p95": 144.042,
+    "p99": 157.091
   },
   "configuration": {
     "concurrency": 20,
@@ -20,16 +20,16 @@
   },
   "quality_gate": {
     "maximum_p95_ms": 500.0,
-    "observed_p95_ms": 200.356,
+    "observed_p95_ms": 144.042,
     "status": "passed"
   },
-  "run_at": "2026-07-16T14:56:01.448487+00:00",
+  "run_at": "2026-07-19T04:22:08.062124+00:00",
   "seeding": {
-    "seconds": 29.37
+    "seconds": 34.212
   },
   "server_retrieval_latency_ms": {
-    "p50": 26.269,
-    "p95": 38.091,
-    "p99": 45.514
+    "p50": 30.442,
+    "p95": 53.619,
+    "p99": 74.207
   }
 }

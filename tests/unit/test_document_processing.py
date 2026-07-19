@@ -7,6 +7,7 @@ from enterprise_rag_core.indexing import (
     ChunkDraft,
     DeterministicEmbeddingStub,
     DeterministicIndexingError,
+    FastEmbedEmbeddingProvider,
     calculate_retry_delay,
     chunk_document,
     chunk_text,
@@ -70,13 +71,47 @@ def test_chunking_is_deterministic_and_preserves_overlap() -> None:
 def test_embedding_stub_is_deterministic_but_not_constant() -> None:
     provider = DeterministicEmbeddingStub(dimensions=16)
 
-    first = provider.embed(["tenant policy", "different text"])
-    repeated = provider.embed(["tenant policy"])
+    first = provider.embed_documents(["tenant policy", "different text"])
+    repeated = provider.embed_documents(["tenant policy"])
 
     assert len(first) == 2
     assert len(first[0]) == 16
     assert first[0] == repeated[0]
     assert first[0] != first[1]
+    assert provider.embed_query("tenant policy") == first[0]
+    assert provider.version == "deterministic-sha256-v1"
+    assert provider.is_semantic is False
+
+
+class RecordingFastEmbedModel:
+    def __init__(self) -> None:
+        self.inputs: list[list[str]] = []
+
+    def embed(self, texts: list[str], *, batch_size: int) -> list[list[float]]:
+        self.inputs.append(list(texts))
+        return [[float(index + 1)] * 384 for index, _ in enumerate(texts)]
+
+
+def test_fastembed_provider_separates_query_and_passage_encoding() -> None:
+    model = RecordingFastEmbedModel()
+    provider = FastEmbedEmbeddingProvider(
+        model_name="BAAI/bge-small-en-v1.5",
+        cache_dir="~/.cache/enterprise-rag/fastembed",
+        batch_size=8,
+        model=model,
+    )
+
+    documents = provider.embed_documents(["retention policy", "incident response"])
+    query = provider.embed_query("how long are records retained?")
+
+    assert model.inputs == [
+        ["passage: retention policy", "passage: incident response"],
+        ["query: how long are records retained?"],
+    ]
+    assert len(documents) == 2
+    assert len(documents[0]) == len(query) == 384
+    assert provider.version == "fastembed:BAAI/bge-small-en-v1.5"
+    assert provider.is_semantic is True
 
 
 def test_retry_delay_is_exponential_and_capped() -> None:

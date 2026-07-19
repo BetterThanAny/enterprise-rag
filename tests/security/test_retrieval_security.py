@@ -74,7 +74,7 @@ async def add_ready_document(
         status=DocumentVersionStatus.READY,
         is_current=True,
     )
-    embedding = DeterministicEmbeddingStub(dimensions=16).embed([content])[0]
+    embedding = DeterministicEmbeddingStub(dimensions=16).embed_documents([content])[0]
     session.add_all([document, version])
     await session.flush()
     session.add(
@@ -85,7 +85,7 @@ async def add_ready_document(
             ordinal=0,
             content=content,
             content_checksum=checksum,
-            embedding=embedding,
+            development_embedding=embedding,
         )
     )
     return document_id

@@ -1,0 +1,54 @@
+{
+  "comparison": {
+    "minimum_absolute_delta": 0.2,
+    "recall_at_5_absolute_delta": 0.864805,
+    "status": "passed"
+  },
+  "dataset": {
+    "abstracts_license": "ODC-By 1.0",
+    "archive_sha256": "11c621288d41ac144d29b13b0f8503b3820b7d6e8b1f6ff24dff335c196d76be",
+    "archive_url": "https://scifact.s3-us-west-2.amazonaws.com/release/latest/data.tar.gz",
+    "claims_and_evidence_license": "CC BY 4.0",
+    "corpus_documents": 5183,
+    "description": "SciFact dev claims with public human evidence annotations; scientific-domain evidence, not enterprise-policy production truth.",
+    "human_labeled_queries": 188,
+    "kind": "public_human_labeled_scientific_retrieval",
+    "source": "https://github.com/allenai/scifact",
+    "version": "scifact-dev-2020"
+  },
+  "limitations": [
+    "SciFact is scientific-domain retrieval, not enterprise-policy production traffic.",
+    "The report validates semantic retrieval evidence, not generation quality."
+  ],
+  "providers": {
+    "deterministic_hash_baseline": {
+      "dimensions": 384,
+      "metrics": {
+        "document_embedding_seconds": 2.602,
+        "mrr_at_10": 0.0,
+        "ndcg_at_10": 0.0,
+        "queries": 188,
+        "query_embedding_seconds": 0.05,
+        "recall_at_5": 0.0,
+        "search_latency_ms_p50": 0.266,
+        "search_latency_ms_p95": 0.521
+      },
+      "version": "deterministic-sha256-v1"
+    },
+    "real_semantic": {
+      "dimensions": 384,
+      "metrics": {
+        "document_embedding_seconds": 445.484,
+        "mrr_at_10": 0.784729,
+        "ndcg_at_10": 0.819212,
+        "queries": 188,
+        "query_embedding_seconds": 1.032,
+        "recall_at_5": 0.864805,
+        "search_latency_ms_p50": 0.544,
+        "search_latency_ms_p95": 0.699
+      },
+      "version": "fastembed:BAAI/bge-small-en-v1.5"
+    }
+  },
+  "run_at": "2026-07-19T04:29:56.637460+00:00"
+}

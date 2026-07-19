@@ -202,7 +202,7 @@ async def seed_corpus(
                         ordinal=0,
                         content=item.content,
                         content_checksum=checksum,
-                        embedding=embedder.embed([item.content])[0],
+                        development_embedding=embedder.embed_documents([item.content])[0],
                     )
                 )
                 document_key_by_id[document_id] = item.key

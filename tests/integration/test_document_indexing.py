@@ -108,7 +108,7 @@ async def test_update_only_changes_the_target_document(
     second_chunks_before = list(
         (
             await db_session.execute(
-                select(Chunk.id, Chunk.content, Chunk.embedding).where(
+                select(Chunk.id, Chunk.content, Chunk.development_embedding).where(
                     Chunk.document_id == second_document_id
                 )
             )
@@ -128,7 +128,7 @@ async def test_update_only_changes_the_target_document(
     second_chunks_after = list(
         (
             await db_session.execute(
-                select(Chunk.id, Chunk.content, Chunk.embedding).where(
+                select(Chunk.id, Chunk.content, Chunk.development_embedding).where(
                     Chunk.document_id == second_document_id
                 )
             )
@@ -153,19 +153,34 @@ async def test_update_only_changes_the_target_document(
 
 
 class FailOnceEmbedding:
+    dimensions = 16
+    is_semantic = False
+    version = "fail-once-test-v1"
+
     def __init__(self) -> None:
         self.calls = 0
 
-    def embed(self, texts: list[str]) -> list[list[float]]:
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
         self.calls += 1
         if self.calls == 1:
             raise TransientIndexingError("embedding_timeout", "Embedding timed out")
-        return DeterministicEmbeddingStub(dimensions=16).embed(texts)
+        return DeterministicEmbeddingStub(dimensions=16).embed_documents(texts)
+
+    def embed_query(self, text: str) -> list[float]:
+        return DeterministicEmbeddingStub(dimensions=16).embed_query(text)
 
 
 class AlwaysFailEmbedding:
-    def embed(self, texts: list[str]) -> list[list[float]]:
+    dimensions = 16
+    is_semantic = False
+    version = "always-fail-test-v1"
+
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
         del texts
+        raise TransientIndexingError("embedding_unavailable", "Embedding is unavailable")
+
+    def embed_query(self, text: str) -> list[float]:
+        del text
         raise TransientIndexingError("embedding_unavailable", "Embedding is unavailable")
 
 

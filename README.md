@@ -1,7 +1,44 @@
 # Enterprise RAG
 
-An enterprise-style, multi-tenant RAG knowledge base implemented milestone by milestone. The
-current implementation scope is documented in `PLAN.md`; the repository implements M1 through M5.
+[![CI](https://github.com/BetterThanAny/enterprise-rag/actions/workflows/ci.yml/badge.svg)](https://github.com/BetterThanAny/enterprise-rag/actions/workflows/ci.yml)
+[![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB.svg)](.mise.toml)
+[![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+
+A backend-first, multi-tenant RAG knowledge base focused on the hard parts that portfolio demos
+often skip: SQL-level tenant/ACL filtering, idempotent indexing, worker-kill recovery, authorized
+citations, versioned traces, and reproducible retrieval evidence.
+
+```mermaid
+flowchart LR
+    Client --> API["FastAPI / JWT / RBAC"]
+    API --> DB[("PostgreSQL + pgvector")]
+    API --> MinIO[("MinIO originals")]
+    API --> Redis[("Redis queue")]
+    Redis --> Worker["Dramatiq worker"]
+    Worker --> Embed["FastEmbed BGE / test stub"]
+    Embed --> DB
+    API --> Retrieve["SQL-filtered lexical + dense + RRF"]
+    Retrieve --> DB
+    Retrieve --> Provider["Reranker + OpenAI-compatible LLM"]
+```
+
+The repository has released M1 through M5. The M6 implementation is present as a release candidate
+and remains pending the final GitHub delivery checks recorded in `PLAN.md`. See
+[architecture](docs/architecture.md), [reproducible demos](docs/demo.md), and the command-by-command
+acceptance record in `PLAN.md`.
+
+## Evidence, not headline percentages
+
+| Evaluation | Dataset | Recall@5 | MRR@10 | NDCG@10 | Interpretation |
+|---|---:|---:|---:|---:|---|
+| FastEmbed `BAAI/bge-small-en-v1.5` | SciFact: 5,183 docs / 188 human-labeled queries | 0.864805 | 0.784729 | 0.819212 | Public semantic evidence; scientific domain only |
+| Deterministic hash baseline (384d) | Same SciFact subset | 0.000000 | 0.000000 | 0.000000 | Negative control, not a semantic model |
+| Lexical regression | 200 controlled synthetic queries | 1.000000 | see report | see report | Repeatable correctness gate, not production quality |
+
+The SciFact run used a pinned archive checksum and recorded 445.484 seconds for full-corpus CPU
+embedding; the reproducible report lives at
+`data/eval/reports/m6-scifact-bge-small-en-v1.5.json`. Dataset provenance and licenses are in
+`data/eval/README.md`.
 
 ## Current capabilities
 
@@ -17,6 +54,8 @@ current implementation scope is documented in `PLAN.md`; the repository implemen
   explicit `pending`, `running`, `succeeded`, `failed`, and `cancelled` states
 - Deterministic parsing, text cleanup, overlapping chunks, embedding-provider abstraction, and
   `pgvector` persistence
+- A real CPU FastEmbed `BAAI/bge-small-en-v1.5` provider with a separate 384-dimensional semantic
+  vector column and non-destructive migration from the original 16-dimensional test vectors
 - Idempotent upload/update/rebuild operations, document deletion, and orphan-object cleanup
 - Worker-kill recovery at parse, embedding, and database-write stages without duplicate chunks
 - Tenant-scoped document and job APIs with filename and upload-size validation
@@ -26,6 +65,8 @@ current implementation scope is documented in `PLAN.md`; the repository implemen
   scores, latency, and configuration/dataset versions
 - A fixed 200-query controlled retrieval regression set and reproducible lexical/dense/hybrid/
   hybrid+rerank ablation report
+- A fixed-checksum SciFact dev evaluation over the full 5,183-document corpus and 188 queries with
+  human evidence annotations
 - OpenAI-compatible streaming provider boundary with OpenAI and DeepSeek remote configurations,
   an Ollama local configuration, and an explicitly marked deterministic development/test stub
 - SSE answers with timeout/disconnect cancellation, authorized chunk-ID validation, citation
@@ -40,12 +81,18 @@ current implementation scope is documented in `PLAN.md`; the repository implemen
 - Bounded pre-output Provider 429/5xx recovery and PostgreSQL-authoritative Redis outage recovery
 - An authenticated HTTP/JSON target compatible with `llm-eval-platform`'s generic HTTP adapter
 - A deterministic 50,000-chunk/20-concurrency hybrid+rerank load gate and isolated fresh-stack demo
+- A real semantic fresh-stack demo and optional Docker Ollama live-token smoke
 
-The default embedding implementation is explicitly a deterministic, no-cost development/test
-stub. It writes real vectors and exercises the complete persistence path, but it is not a semantic
-production model. The default generation provider is likewise an explicit deterministic smoke-test
-stub. Real provider credentials must be injected at runtime. Provider usage is stored as exact when
-returned and explicitly marked `estimated` otherwise; cost uses deployment-owned rate variables.
+Defaults remain deterministic so CI is credential-free and never downloads a model silently. Set
+`EMBEDDING_PROVIDER=fastembed` for real semantic retrieval; `scripts/demo.py --semantic` verifies
+that model through worker indexing and PostgreSQL/pgvector retrieval. Generation defaults to an
+explicit test stub, while the optional Compose Ollama profile has been live-tested with streamed
+tokens. Provider usage is exact when returned and marked `estimated` otherwise.
+
+This is not a hosted SaaS or a production benchmark. There is no frontend, conversation/message
+persistence, OCR/layout model, provider-management UI, external OTLP deployment, or online demo.
+SciFact is scientific-domain evidence retrieval and must not be presented as enterprise-policy
+traffic. These limits are intentional and documented rather than implied as delivered features.
 
 ## Environment
 
@@ -74,6 +121,7 @@ mise exec -- uv run pytest -q tests/fault
 mise exec -- uv run python scripts/smoke_test.py
 mise exec -- uv run python scripts/evaluate_retrieval.py --dataset data/eval/retrieval.jsonl
 mise exec -- uv run python scripts/evaluate_generation.py --dataset data/eval/generation.jsonl
+mise exec -- uv run python scripts/evaluate_public_retrieval.py
 mise exec -- uv run python scripts/cleanup_orphans.py --dry-run
 mise exec -- uv run python scripts/recovery_test.py
 mise exec -- uv run python scripts/load_test.py --chunks 50000 --concurrency 20
@@ -89,6 +137,12 @@ readiness, login, upload, worker indexing, hybrid/rerank retrieval, SSE answer/c
 mise install
 mise exec -- uv sync --frozen
 mise exec -- uv run python scripts/demo.py
+```
+
+To exercise the real semantic model through a fresh PostgreSQL/pgvector stack:
+
+```bash
+mise exec -- uv run python scripts/demo.py --semantic
 ```
 
 The demo prints its Compose project name and intentionally leaves its containers and isolated
@@ -136,7 +190,7 @@ the full `Bearer ...` value through `header_env.Authorization`. The raw response
 usage and trace metadata; the two projects do not share a database or source dependency.
 
 Operational procedures are in `docs/operations.md`; failure diagnosis is in
-`docs/troubleshooting.md`. M5 architecture tradeoffs are recorded in ADR 0005.
+`docs/troubleshooting.md`. Architecture tradeoffs are recorded under `docs/adr/`.
 
 Upload, update, and rebuild requests also require an `Idempotency-Key` header. Accepted work returns
 `202 Accepted` with a stable `task_id`, `document_id`, and `version_id`. The worker command in

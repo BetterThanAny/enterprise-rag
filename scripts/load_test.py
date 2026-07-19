@@ -162,7 +162,9 @@ async def replace_load_corpus(
                 for batch_start in range(start, end, 500):
                     batch_end = min(end, batch_start + 500)
                     contents = [chunk_content(index) for index in range(batch_start, batch_end)]
-                    embeddings = await asyncio.to_thread(embedder.embed, contents)
+                    embeddings = await asyncio.to_thread(
+                        embedder.embed_documents, contents
+                    )
                     rows = [
                         {
                             "id": stable_id(f"chunk:{chunks}:{index}"),
@@ -172,7 +174,7 @@ async def replace_load_corpus(
                             "ordinal": index - start,
                             "content": content,
                             "content_checksum": hashlib.sha256(content.encode()).hexdigest(),
-                            "embedding": embedding,
+                            "development_embedding": embedding,
                         }
                         for index, content, embedding in zip(
                             range(batch_start, batch_end),

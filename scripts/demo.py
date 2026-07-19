@@ -30,6 +30,11 @@ def main() -> None:
     parser.add_argument("--minio-port", type=int, default=29000)
     parser.add_argument("--minio-console-port", type=int, default=29001)
     parser.add_argument("--api-port", type=int, default=28000)
+    parser.add_argument(
+        "--semantic",
+        action="store_true",
+        help="Use the real FastEmbed BGE model and verify its trace version.",
+    )
     arguments = parser.parse_args()
     password = secrets.token_urlsafe(32)
     encoded_password = urllib.parse.quote(password, safe="")
@@ -53,6 +58,7 @@ def main() -> None:
         "API_PORT": str(arguments.api_port),
         "GENERATION_PROVIDER": "deterministic",
         "RERANKER_PROVIDER": "deterministic",
+        "EMBEDDING_PROVIDER": "fastembed" if arguments.semantic else "deterministic",
     }
     subprocess.run(  # noqa: S603 -- fixed Compose command scoped to the requested project
         [
@@ -68,18 +74,22 @@ def main() -> None:
         check=True,
         env=environment,
     )
-    os.environ.update(
-        environment
-        | {
-            "DATABASE_URL": (
-                "postgresql+psycopg://enterprise_rag:"
-                f"{encoded_password}@127.0.0.1:{arguments.postgres_port}/enterprise_rag"
-            ),
-            "API_URL": f"http://127.0.0.1:{arguments.api_port}",
-            "REDIS_URL": f"redis://127.0.0.1:{arguments.redis_port}/0",
-            "MINIO_ENDPOINT": f"127.0.0.1:{arguments.minio_port}",
-        }
-    )
+    runtime_environment = environment | {
+        "DATABASE_URL": (
+            "postgresql+psycopg://enterprise_rag:"
+            f"{encoded_password}@127.0.0.1:{arguments.postgres_port}/enterprise_rag"
+        ),
+        "API_URL": f"http://127.0.0.1:{arguments.api_port}",
+        "REDIS_URL": f"redis://127.0.0.1:{arguments.redis_port}/0",
+        "MINIO_ENDPOINT": f"127.0.0.1:{arguments.minio_port}",
+        "SMOKE_JOB_TIMEOUT_SECONDS": "180" if arguments.semantic else "30",
+        "SMOKE_HTTP_TIMEOUT_SECONDS": "180" if arguments.semantic else "10",
+    }
+    if arguments.semantic:
+        runtime_environment["EXPECTED_EMBEDDING_VERSION"] = (
+            "fastembed:BAAI/bge-small-en-v1.5"
+        )
+    os.environ.update(runtime_environment)
     run_smoke()
     print(
         f"Fresh-stack demo passed for Compose project {arguments.project}. "

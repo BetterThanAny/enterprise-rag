@@ -25,6 +25,10 @@ def required_env(name: str) -> str:
     return value
 
 
+def http_timeout(default: float = 10) -> float:
+    return float(os.environ.get("SMOKE_HTTP_TIMEOUT_SECONDS", str(default)))
+
+
 async def seed_smoke_identity(database_url: str, password: str) -> str:
     engine, session_factory = create_database_resources(database_url)
     async with session_factory() as session:
@@ -107,7 +111,7 @@ def request_json(
         method=method,
     )
     try:
-        with urllib.request.urlopen(request, timeout=10) as response:  # noqa: S310
+        with urllib.request.urlopen(request, timeout=http_timeout()) as response:  # noqa: S310
             payload = response.read()
             return response.status, json.loads(payload) if payload else None
     except urllib.error.HTTPError as exc:
@@ -130,7 +134,7 @@ def request_sse(
         method="POST",
     )
     try:
-        with urllib.request.urlopen(request, timeout=30) as response:  # noqa: S310
+        with urllib.request.urlopen(request, timeout=http_timeout(30)) as response:  # noqa: S310
             return response.status, response.read().decode()
     except urllib.error.HTTPError as exc:
         return exc.code, exc.read().decode()
@@ -151,7 +155,7 @@ def request_text(url: str) -> tuple[int, str]:
         raise RuntimeError("Smoke test only permits HTTP(S) URLs")
     request = urllib.request.Request(url, method="GET")  # noqa: S310
     try:
-        with urllib.request.urlopen(request, timeout=10) as response:  # noqa: S310
+        with urllib.request.urlopen(request, timeout=http_timeout()) as response:  # noqa: S310
             return response.status, response.read().decode()
     except urllib.error.HTTPError as exc:
         return exc.code, exc.read().decode()
@@ -163,7 +167,8 @@ def require(condition: bool, message: str) -> None:
 
 
 def wait_for_job(api_url: str, task_id: str, headers: dict[str, str]) -> dict[str, Any]:
-    deadline = time.monotonic() + 30
+    timeout_seconds = float(os.environ.get("SMOKE_JOB_TIMEOUT_SECONDS", "30"))
+    deadline = time.monotonic() + timeout_seconds
     last_job: dict[str, Any] | None = None
     while time.monotonic() < deadline:
         status, job = request_json(
@@ -262,6 +267,12 @@ def main() -> None:
         headers=headers,
     )
     require(retrieval_status == 200 and bool(retrieval["trace_id"]), "retrieval failed")
+    expected_embedding_version = os.environ.get("EXPECTED_EMBEDDING_VERSION")
+    require(
+        expected_embedding_version is None
+        or retrieval["embedding_version"] == expected_embedding_version,
+        "retrieval used an unexpected embedding provider",
+    )
     require(
         retrieval["mode"] == "hybrid"
         and retrieval["reranker_version"] is not None
@@ -335,7 +346,7 @@ def main() -> None:
     require(delete_status == 204, "document deletion failed")
     require(deleted_job_status == 404, "document deletion left its job reachable")
     print(
-        "M5 smoke test passed: readiness, auth, tenant KB, async upload/index, "
+        "End-to-end smoke test passed: readiness, auth, tenant KB, async upload/index, "
         "idempotent resubmission, hybrid retrieval/rerank trace, SSE generation with "
         "validated citation, reconstructed QA trace, evaluation target, metrics, delete"
     )

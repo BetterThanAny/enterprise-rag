@@ -286,6 +286,10 @@ class Chunk(Base, TimestampMixin):
         UniqueConstraint("tenant_id", "version_id", "ordinal", name="uq_chunks_version_ordinal"),
         UniqueConstraint("tenant_id", "id", name="uq_chunks_tenant_id_id"),
         CheckConstraint("char_length(content_checksum) = 64", name="content_checksum_length"),
+        CheckConstraint(
+            "num_nonnulls(embedding, semantic_embedding) = 1",
+            name="exactly_one_embedding",
+        ),
         Index("ix_chunks_tenant_document_version", "tenant_id", "document_id", "version_id"),
         Index("ix_chunks_search_vector", "search_vector", postgresql_using="gin"),
         Index(
@@ -293,6 +297,12 @@ class Chunk(Base, TimestampMixin):
             "embedding",
             postgresql_using="hnsw",
             postgresql_ops={"embedding": "vector_cosine_ops"},
+        ),
+        Index(
+            "ix_chunks_semantic_embedding_hnsw",
+            "semantic_embedding",
+            postgresql_using="hnsw",
+            postgresql_ops={"semantic_embedding": "vector_cosine_ops"},
         ),
     )
 
@@ -309,7 +319,10 @@ class Chunk(Base, TimestampMixin):
     page_number: Mapped[int | None] = mapped_column()
     heading_path: Mapped[str | None] = mapped_column(String(1000))
     content_checksum: Mapped[str] = mapped_column(String(64), nullable=False)
-    embedding: Mapped[list[float]] = mapped_column(Vector(16), nullable=False)
+    development_embedding: Mapped[list[float] | None] = mapped_column(
+        "embedding", Vector(16)
+    )
+    semantic_embedding: Mapped[list[float] | None] = mapped_column(Vector(384))
     search_vector: Mapped[str] = mapped_column(
         TSVECTOR,
         Computed("to_tsvector('simple'::regconfig, content)", persisted=True),

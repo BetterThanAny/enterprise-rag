@@ -44,7 +44,7 @@
 - 重排：Cross-Encoder Reranker
 - 观测：OpenTelemetry、Prometheus、结构化日志
 - 部署：Docker Compose
-- UI：Vue 3 最小管理与问答界面，后端完成后再做
+- UI：Vue 3 最小管理与问答界面（M1--M6 未实施，属于未来可选范围）
 
 项目环境使用 `.mise.toml` 固定 Python 版本，并通过 `_.file = ".env"` 自动加载本地环境变量。密钥只允许使用环境变量或 `op://...` 引用。
 
@@ -79,10 +79,10 @@ Client
 - `chunks`
 - `document_acl`
 - `index_jobs`
-- `conversations`
-- `messages`
+- `conversations`（未来范围，M1--M6 未实施）
+- `messages`（未来范围，M1--M6 未实施）
 - `retrieval_traces`
-- `provider_configs`
+- `provider_configs`（未来范围；当前 provider 配置来自环境变量）
 
 所有业务表必须明确 `tenant_id` 归属。向量检索不得先跨租户召回再由应用层丢弃结果；过滤条件必须进入检索查询。
 
@@ -798,6 +798,71 @@ run `29509631260` 在 `Start stateful test dependencies` 步骤失败：GitHub R
 因此 GitHub-hosted CI 已从 **unverified** 更新为 **verified**。首次失败属于已修复的交付配置
 缺口，不改变 M1--M5 功能验收结果。
 
+### M6：真实语义证据与作品集可信度
+
+#### 工作内容
+
+- 保留既有公开 Git 历史，不重写初始提交；后续按真实技术边界拆分可审计提交。
+- 新增 FastEmbed `BAAI/bge-small-en-v1.5` 384 维语义 embedding provider，同时保留明确标记的
+  16 维 deterministic CI/test provider。
+- 使用非破坏性 Alembic migration 增加独立 semantic vector；旧向量不冒充真实 embedding，
+  provider 切换后通过显式 rebuild 生成对应向量。
+- 使用 SciFact dev 的公开人工 evidence 标注建立真实语义检索基线，记录来源、许可、下载
+  SHA-256、模型版本、语料/查询规模、Recall@K、MRR/NDCG 和延迟；不把 scientific-domain
+  结果外推为企业 policy 生产质量。
+- 提供可选 Docker Ollama + `qwen2.5:0.5b` live provider smoke，验证真实 OpenAI-compatible
+  流式调用，不要求全局安装或付费凭据，也不替代 deterministic CI gate。
+- 增加 Apache-2.0 项目许可证、README 架构图、可信度边界、真实/合成评测对照和可复现演示
+  文档；补充 GitHub description 与 topics。
+- 明确 Vue UI、conversation/message 持久化、provider 配置管理、外部 OTLP collector 和在线
+  部署仍是未实施范围，不再让推荐技术栈或实体草图看起来像已交付功能。
+
+#### 退出条件
+
+- M5 -> M6 与空库 -> M6 migration 均通过，既有 16 维向量保持可检索；384 维 semantic 行与
+  deterministic 行不能混用错误的向量列。
+- FastEmbed provider 使用真实 ONNX 模型完成 document/query 编码，并通过真实 PostgreSQL/
+  pgvector 的索引与 dense/hybrid 检索路径；默认无模型下载的 CI 仍可重复运行。
+- SciFact 报告至少覆盖 150 条带人工 evidence 标注的 dev queries 和完整 5,000+ corpus，且
+  real semantic Recall@5 相对 deterministic hash baseline 至少提高 0.20；未达到时保存
+  non-finding，不修改门槛。
+- Docker Ollama live smoke 实际收到非空流式 token；若模型服务环境不可用则保持
+  **unverified**，不得用 HTTP stub 代替 live 结果。
+- README 能在首屏说明架构、真实验证结果与限制；仓库具有明确 description、topics、license
+  和无需凭据的一键 deterministic demo。
+- 原有 lint、strict type、unit、integration、security、fault、smoke、负载与 GitHub Actions
+  全部无回归，且没有 skipped/0 tests/静默环境 gating。
+
+#### 实施状态（2026-07-17）
+
+**状态：进行中。** 本里程碑只补强真实语义证据、Provider live smoke 与作品集交付可信度；
+不实现 Vue UI、会话系统、通用 provider 管理后台或在线生产部署。只有上述退出条件实际执行后
+才会更新为完成。
+
+#### M6 本地发布候选验收（2026-07-19）
+
+当前实现已完成本地退出条件验证，但在当前提交推送并通过 GitHub Actions、GitHub 识别
+Apache-2.0 license、仓库 description/topics 写入成功前，M6 继续保持“进行中”，README 不将其
+表述为已发布里程碑。
+
+| 命令 | 结果 |
+|---|---|
+| `mise exec -- uv lock --check` / `uv sync --frozen` | 通过；锁文件解析 88 个包，85 个已安装包检查完成 |
+| `mise exec -- uv run ruff check .` / `pyright` | 通过；lint 无错误，类型检查 0 errors、0 warnings、0 informations |
+| `mise exec -- uv run pytest --collect-only -q` | 通过；收集 91 tests，非 0 tests；测试与配置中无 skip/xfail/importorskip/collection gate |
+| `mise exec -- uv run pytest -q -ra` | 通过；91 passed、0 skipped；5 条 warning 均来自 PyMuPDF SWIG 导入 |
+| `alembic upgrade head` / `current` / `check` | 通过；当前为 `20260717_0006 (head)`，没有待生成 schema 变更；migration 测试覆盖空库、M5 升级与 legacy/semantic 向量隔离 |
+| `python scripts/demo.py`（全新 Compose project/volumes） | 通过；无需凭据完成迁移、readiness、上传/索引、幂等、Hybrid/Rerank、SSE 授权引用、trace、metrics 和删除 |
+| `python scripts/demo.py --semantic`（全新 Compose project/volumes） | 通过；真实 FastEmbed BGE 经 worker 写入 PostgreSQL/pgvector，并由 dense/hybrid 检索 trace 验证 provider/version |
+| `python scripts/evaluate_public_retrieval.py` | 通过；SciFact 5,183 docs / 188 human-labeled queries，semantic Recall@5 = 0.864805，hash baseline = 0，绝对提升 0.864805 |
+| `python scripts/provider_smoke.py --base-url http://127.0.0.1:11434/v1 --model qwen2.5:0.5b` | 通过；真实 Docker Ollama 返回 81 个非空流式字符并报告 usage |
+| `evaluate_retrieval.py` / `evaluate_generation.py` | 通过；controlled Recall@5 = 0.865，citation = 20/20，abstention = 20/20；Rerank MRR +4.29% 继续记录为阈值下 non-finding |
+| `load_test.py --chunks 50000 --concurrency 20 --requests 200 --max-p95-ms 500` | 通过；client p50/p95/p99 = 109.014/144.042/157.091 ms，server p95 = 53.619 ms，`llm_included=false` |
+| `gitleaks dir . --redact --verbose --no-banner` | 通过；扫描约 1.58 MB，0 secret findings |
+
+本地已验证项没有 failed 或 unverified；GitHub-hosted CI、license 识别和 description/topics 是
+剩余远端发布门禁。仓库元数据写入首次尝试被本机 1Password 外部写操作审批门禁拒绝，未绕过。
+
 ## 6. 总体验收标准
 
 | 类别 | 验收标准 |
@@ -870,3 +935,4 @@ mise exec -- uv run python scripts/load_test.py --chunks 50000 --concurrency 20
 | 2026-07-15 23:15 CST | M4 项目依赖（HTTPX，从 dev-only 提升为 runtime） | `mise exec -- uv add 'httpx>=0.28,<1'`，随后 `mise exec -- uv remove --dev httpx` 去除重复声明 | OpenAI-compatible async HTTP/SSE、timeout 与资源关闭 | `mise exec -- uv remove httpx` |
 | 2026-07-16 09:45 CST | M5 项目依赖（Prometheus client、OpenTelemetry API/SDK、OTLP/HTTP exporter） | `mise exec -- uv add 'prometheus-client>=0.22,<1' 'opentelemetry-api>=1.37,<2' 'opentelemetry-sdk>=1.37,<2' 'opentelemetry-exporter-otlp-proto-http>=1.37,<2'` | 低 cardinality metrics、跨阶段 trace 与可选 OTLP export | `mise exec -- uv remove prometheus-client opentelemetry-api opentelemetry-sdk opentelemetry-exporter-otlp-proto-http` |
 | 2026-07-16 10:36 CST | uv 0.11.28（mise 项目工具） | 在 `.mise.toml` 固定版本后执行 `mise install` | 使 README fresh-machine 路径只依赖已声明的 Git、Docker、mise，并与 Dockerfile 版本一致 | `mise uninstall uv@0.11.28` |
+| 2026-07-17 10:55 CST | M6 项目依赖（FastEmbed 0.8、NumPy 2） | `mise exec -- uv add 'fastembed>=0.8,<0.9'` 与 `mise exec -- uv add 'numpy>=2,<3'` | 真实 CPU ONNX semantic embedding 与可复现公开检索评测 | `mise exec -- uv remove fastembed numpy` |

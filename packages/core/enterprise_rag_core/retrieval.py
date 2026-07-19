@@ -13,7 +13,7 @@ from sqlalchemy.sql.elements import ColumnElement
 
 from enterprise_rag_core.config import Settings
 from enterprise_rag_core.errors import NotFoundError, ValidationDomainError
-from enterprise_rag_core.indexing import DeterministicEmbeddingStub, EmbeddingProvider
+from enterprise_rag_core.indexing import EmbeddingProvider, build_embedding_provider
 from enterprise_rag_core.models import (
     AclPermission,
     Chunk,
@@ -211,14 +211,23 @@ class RetrievalRepository:
         knowledge_base_id: UUID,
         query_vector: list[float],
         limit: int,
+        semantic_embedding: bool,
     ) -> list[RetrievalCandidate]:
-        distance = Chunk.embedding.cosine_distance(query_vector).label("distance")
+        embedding_column = (
+            Chunk.semantic_embedding
+            if semantic_embedding
+            else Chunk.development_embedding
+        )
+        distance = embedding_column.cosine_distance(query_vector).label("distance")
         version_join, document_join = self._joins()
         statement = (
             select(Chunk, Document.filename, distance)
             .join(DocumentVersion, version_join)
             .join(Document, document_join)
-            .where(*self._base_predicates(context, knowledge_base_id))
+            .where(
+                *self._base_predicates(context, knowledge_base_id),
+                embedding_column.is_not(None),
+            )
             # pgvector HNSW can satisfy a pure distance order. Adding a secondary
             # UUID sort forces PostgreSQL to scan and sort the filtered corpus.
             .order_by(distance)
@@ -258,9 +267,7 @@ class RetrievalService:
         self.repository = repository
         self.settings = settings
         self.reranker = reranker
-        self.embedding = embedding or DeterministicEmbeddingStub(
-            dimensions=settings.embedding_dimensions
-        )
+        self.embedding = embedding or build_embedding_provider(settings)
 
     async def retrieve(
         self,
@@ -330,12 +337,15 @@ class RetrievalService:
                 limit=candidate_k,
             )
         if mode in {RetrievalMode.DENSE, RetrievalMode.HYBRID}:
-            query_vector = (await asyncio.to_thread(self.embedding.embed, [normalized_query]))[0]
+            query_vector = await asyncio.to_thread(
+                self.embedding.embed_query, normalized_query
+            )
             dense = await self.repository.dense(
                 context=context,
                 knowledge_base_id=knowledge_base_id,
                 query_vector=query_vector,
                 limit=candidate_k,
+                semantic_embedding=self.embedding.is_semantic,
             )
         candidates = self._combine(mode, lexical, dense, candidate_k)
         reranker_version: str | None = None
@@ -382,7 +392,7 @@ class RetrievalService:
                 candidate_k=candidate_k,
                 rerank=rerank,
                 retriever_version=self.settings.retrieval_config_version,
-                embedding_version=self.settings.embedding_model_version,
+                embedding_version=self.embedding.version,
                 reranker_version=reranker_version,
                 dataset_version=dataset_version,
                 duration_ms=duration_ms,

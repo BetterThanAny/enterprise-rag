@@ -29,8 +29,13 @@ class Settings(BaseSettings):
     max_upload_bytes: int = Field(default=10 * 1024 * 1024, ge=1024)
     chunk_size_chars: int = Field(default=800, ge=32, le=8000)
     chunk_overlap_chars: int = Field(default=100, ge=0, le=2000)
+    embedding_provider: Literal["deterministic", "fastembed"] = "deterministic"
     embedding_dimensions: Literal[16] = 16
     embedding_model_version: str = "deterministic-sha256-v1"
+    semantic_embedding_dimensions: Literal[384] = 384
+    fastembed_model_name: str = "BAAI/bge-small-en-v1.5"
+    fastembed_cache_dir: str = "~/.cache/enterprise-rag/fastembed"
+    fastembed_batch_size: int = Field(default=64, ge=1, le=1024)
     index_job_max_attempts: int = Field(default=4, ge=1, le=20)
     index_job_lease_seconds: int = Field(default=30, ge=1, le=3600)
     index_retry_base_seconds: int = Field(default=2, ge=1, le=300)

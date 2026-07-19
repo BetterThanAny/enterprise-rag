@@ -478,3 +478,118 @@ async def test_m4_schema_upgrades_to_m5_and_backfills_reconstructable_trace_ids(
     assert len(migrated.span_id) == len(migrated.retrieval_span_id) == 16
     assert migrated.request_id.startswith("migrated-")
     assert migrated.provider_attempts == 1
+
+
+@pytest.mark.integration
+async def test_m5_schema_upgrades_to_m6_without_relabeling_legacy_embeddings(
+    integration_settings: Settings,
+) -> None:
+    env = os.environ.copy()
+    env["DATABASE_URL"] = integration_settings.database_url
+    downgrade = await asyncio.create_subprocess_exec(
+        UV,
+        "run",
+        "alembic",
+        "downgrade",
+        "20260716_0005",
+        cwd=PROJECT_ROOT,
+        env=env,
+    )
+    assert await downgrade.wait() == 0
+    tenant_id = uuid4()
+    knowledge_base_id = uuid4()
+    document_id = uuid4()
+    version_id = uuid4()
+    chunk_id = uuid4()
+    engine = create_async_engine(integration_settings.database_url)
+    async with engine.begin() as connection:
+        await connection.execute(
+            text("INSERT INTO tenants (id, name, slug) VALUES (:id, 'M6 Tenant', :slug)"),
+            {"id": tenant_id, "slug": f"m6-{tenant_id}"},
+        )
+        await connection.execute(
+            text(
+                "INSERT INTO knowledge_bases (id, tenant_id, name) "
+                "VALUES (:id, :tenant, 'M6 KB')"
+            ),
+            {"id": knowledge_base_id, "tenant": tenant_id},
+        )
+        await connection.execute(
+            text(
+                "INSERT INTO documents "
+                "(id, tenant_id, knowledge_base_id, filename, object_key, checksum, status) "
+                "VALUES (:id, :tenant, :kb, 'legacy-vector.txt', :object_key, "
+                ":checksum, 'ready')"
+            ),
+            {
+                "id": document_id,
+                "tenant": tenant_id,
+                "kb": knowledge_base_id,
+                "object_key": f"tenants/{tenant_id}/legacy-vector.txt",
+                "checksum": "f" * 64,
+            },
+        )
+        await connection.execute(
+            text(
+                "INSERT INTO document_versions "
+                "(id, tenant_id, document_id, version_number, filename, object_key, "
+                "checksum, status, is_current) VALUES "
+                "(:id, :tenant, :document, 1, 'legacy-vector.txt', :object_key, "
+                ":checksum, 'ready', true)"
+            ),
+            {
+                "id": version_id,
+                "tenant": tenant_id,
+                "document": document_id,
+                "object_key": f"tenants/{tenant_id}/legacy-vector-v1.txt",
+                "checksum": "f" * 64,
+            },
+        )
+        await connection.execute(
+            text(
+                "INSERT INTO chunks "
+                "(id, tenant_id, document_id, version_id, ordinal, content, "
+                "content_checksum, embedding) VALUES "
+                "(:id, :tenant, :document, :version, 0, 'legacy hash vector', "
+                ":checksum, '[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]'::vector)"
+            ),
+            {
+                "id": chunk_id,
+                "tenant": tenant_id,
+                "document": document_id,
+                "version": version_id,
+                "checksum": "1" * 64,
+            },
+        )
+    upgrade = await asyncio.create_subprocess_exec(
+        UV,
+        "run",
+        "alembic",
+        "upgrade",
+        "head",
+        cwd=PROJECT_ROOT,
+        env=env,
+    )
+    assert await upgrade.wait() == 0
+    async with engine.connect() as connection:
+        migrated = (
+            await connection.execute(
+                text(
+                    "SELECT vector_dims(embedding) AS development_dimensions, "
+                    "semantic_embedding IS NULL AS semantic_is_null "
+                    "FROM chunks WHERE id = :id"
+                ),
+                {"id": chunk_id},
+            )
+        ).one()
+        indexes = set(
+            (
+                await connection.execute(
+                    text("SELECT indexname FROM pg_indexes WHERE tablename = 'chunks'")
+                )
+            ).scalars()
+        )
+    await engine.dispose()
+    assert migrated.development_dimensions == 16
+    assert migrated.semantic_is_null is True
+    assert "ix_chunks_semantic_embedding_hnsw" in indexes

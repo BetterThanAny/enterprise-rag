@@ -206,7 +206,9 @@ async def replace_evaluation_corpus(
                         ordinal=0,
                         content=corpus_document.content,
                         content_checksum=checksum,
-                        embedding=embeddings.embed([corpus_document.content])[0],
+                        development_embedding=embeddings.embed_documents(
+                            [corpus_document.content]
+                        )[0],
                     )
                 )
                 document_key_by_id[document_id] = corpus_document.document_key

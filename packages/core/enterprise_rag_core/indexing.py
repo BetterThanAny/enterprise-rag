@@ -5,6 +5,7 @@ import hashlib
 import math
 import re
 import unicodedata
+from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -49,7 +50,26 @@ class JobCancelledError(Exception):
 
 
 class EmbeddingProvider(Protocol):
-    def embed(self, texts: list[str]) -> list[list[float]]: ...
+    @property
+    def version(self) -> str: ...
+
+    @property
+    def dimensions(self) -> int: ...
+
+    @property
+    def is_semantic(self) -> bool: ...
+
+    def embed_documents(self, texts: list[str]) -> list[list[float]]: ...
+
+    def embed_query(self, text: str) -> list[float]: ...
+
+
+class FastEmbedModel(Protocol):
+    def embed(self, texts: list[str], *, batch_size: int) -> Iterable[object]: ...
+
+
+class VectorWithToList(Protocol):
+    def tolist(self) -> list[float]: ...
 
 
 class DeterministicEmbeddingStub:
@@ -58,7 +78,15 @@ class DeterministicEmbeddingStub:
     def __init__(self, *, dimensions: int) -> None:
         self.dimensions = dimensions
 
-    def embed(self, texts: list[str]) -> list[list[float]]:
+    @property
+    def version(self) -> str:
+        return "deterministic-sha256-v1"
+
+    @property
+    def is_semantic(self) -> bool:
+        return False
+
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
         vectors: list[list[float]] = []
         for text in texts:
             values: list[float] = []
@@ -69,6 +97,77 @@ class DeterministicEmbeddingStub:
             magnitude = math.sqrt(sum(value * value for value in values)) or 1.0
             vectors.append([value / magnitude for value in values])
         return vectors
+
+    def embed_query(self, text: str) -> list[float]:
+        return self.embed_documents([text])[0]
+
+
+class FastEmbedEmbeddingProvider:
+    """CPU-friendly semantic embeddings backed by a pinned FastEmbed model."""
+
+    dimensions = 384
+    is_semantic = True
+
+    def __init__(
+        self,
+        *,
+        model_name: str,
+        cache_dir: str,
+        batch_size: int,
+        model: FastEmbedModel | None = None,
+    ) -> None:
+        self.model_name = model_name
+        self.batch_size = batch_size
+        if model is None:
+            from fastembed import TextEmbedding
+
+            model = cast(
+                FastEmbedModel,
+                TextEmbedding(
+                    model_name=model_name,
+                    cache_dir=str(Path(cache_dir).expanduser()),
+                ),
+            )
+        self._model = model
+
+    @property
+    def version(self) -> str:
+        return f"fastembed:{self.model_name}"
+
+    @staticmethod
+    def _as_vector(value: object) -> list[float]:
+        if isinstance(value, list):
+            return list(cast(list[float], value))
+        if not hasattr(value, "tolist"):
+            raise TypeError("FastEmbed returned an unsupported vector value")
+        return list(cast(VectorWithToList, value).tolist())
+
+    def _embed(self, texts: list[str]) -> list[list[float]]:
+        vectors = [
+            self._as_vector(value)
+            for value in self._model.embed(texts, batch_size=self.batch_size)
+        ]
+        if any(len(vector) != self.dimensions for vector in vectors):
+            raise ValueError(
+                f"FastEmbed model {self.model_name} must return {self.dimensions} dimensions"
+            )
+        return vectors
+
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        return self._embed([f"passage: {text}" for text in texts])
+
+    def embed_query(self, text: str) -> list[float]:
+        return self._embed([f"query: {text}"])[0]
+
+
+def build_embedding_provider(settings: Settings) -> EmbeddingProvider:
+    if settings.embedding_provider == "fastembed":
+        return FastEmbedEmbeddingProvider(
+            model_name=settings.fastembed_model_name,
+            cache_dir=settings.fastembed_cache_dir,
+            batch_size=settings.fastembed_batch_size,
+        )
+    return DeterministicEmbeddingStub(dimensions=settings.embedding_dimensions)
 
 
 def clean_text(text: str) -> str:
@@ -236,9 +335,7 @@ class IndexingPipeline:
         embedding: EmbeddingProvider | None = None,
     ) -> None:
         self.settings = settings
-        self.embedding = embedding or DeterministicEmbeddingStub(
-            dimensions=settings.embedding_dimensions
-        )
+        self.embedding = embedding or build_embedding_provider(settings)
         self.storage = MinioObjectStorage(settings)
         self.engine, self.session_factory = create_database_resources(settings.database_url)
 
@@ -259,12 +356,17 @@ class IndexingPipeline:
             await self._set_stage(job_id, IndexJobStage.EMBEDDING)
             await self._fault_pause("embedding")
             embeddings = await asyncio.to_thread(
-                self.embedding.embed, [chunk.content for chunk in chunks]
+                self.embedding.embed_documents, [chunk.content for chunk in chunks]
             )
             if len(embeddings) != len(chunks):
                 raise TransientIndexingError(
                     "embedding_count_mismatch",
                     "Embedding provider returned an unexpected vector count",
+                )
+            if any(len(embedding) != self.embedding.dimensions for embedding in embeddings):
+                raise DeterministicIndexingError(
+                    "embedding_dimension_mismatch",
+                    f"Embedding provider must return {self.embedding.dimensions} dimensions",
                 )
             await self._set_stage(job_id, IndexJobStage.DATABASE_WRITE)
             await self._commit_chunks(job, version, chunks, embeddings)
@@ -371,7 +473,10 @@ class IndexingPipeline:
                         page_number=chunk.page_number,
                         heading_path=chunk.heading_path,
                         content_checksum=hashlib.sha256(chunk.content.encode()).hexdigest(),
-                        embedding=embedding,
+                        development_embedding=(
+                            None if self.embedding.is_semantic else embedding
+                        ),
+                        semantic_embedding=(embedding if self.embedding.is_semantic else None),
                     )
                 )
             await session.flush()

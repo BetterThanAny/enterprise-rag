@@ -9,8 +9,29 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from tests.m2_helpers import M2Identity, auth_headers, seed_m2_identity, upload_document
 
 from enterprise_rag_core.config import Settings
-from enterprise_rag_core.indexing import IndexingPipeline
-from enterprise_rag_core.models import IndexJobStatus, RetrievalTrace
+from enterprise_rag_core.indexing import EmbeddingProvider, IndexingPipeline
+from enterprise_rag_core.models import Chunk, IndexJobStatus, RetrievalMode, RetrievalTrace, Role
+from enterprise_rag_core.reranking import DeterministicCrossEncoderStub
+from enterprise_rag_core.retrieval import RetrievalRepository, RetrievalService
+from enterprise_rag_core.services import TenantContext
+
+
+class SemanticEmbeddingStub:
+    dimensions = 384
+    is_semantic = True
+    version = "semantic-integration-test-v1"
+
+    @staticmethod
+    def _vector(text: str) -> list[float]:
+        vector = [0.0] * 384
+        vector[0 if "retention" in text.casefold() else 1] = 1.0
+        return vector
+
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        return [self._vector(text) for text in texts]
+
+    def embed_query(self, text: str) -> list[float]:
+        return self._vector(text)
 
 
 async def index_text(
@@ -21,6 +42,7 @@ async def index_text(
     filename: str,
     content: str,
     idempotency_key: str,
+    embedding: EmbeddingProvider | None = None,
 ) -> UUID:
     response = await upload_document(
         client,
@@ -30,7 +52,9 @@ async def index_text(
         idempotency_key=idempotency_key,
     )
     assert response.status_code == 202
-    result = await IndexingPipeline(settings).process(UUID(response.json()["task_id"]))
+    result = await IndexingPipeline(settings, embedding=embedding).process(
+        UUID(response.json()["task_id"])
+    )
     assert result.status is IndexJobStatus.SUCCEEDED
     return UUID(response.json()["document_id"])
 
@@ -133,3 +157,62 @@ async def test_retrieval_rejects_empty_queries_and_invalid_candidate_windows(
     assert empty_query.json()["error"]["code"] == "empty_query"
     assert invalid_window.status_code == 422
     assert invalid_window.json()["error"]["code"] == "validation_error"
+
+
+@pytest.mark.integration
+async def test_semantic_embeddings_use_the_384_dimension_column_end_to_end(
+    api_client: AsyncClient,
+    db_session: AsyncSession,
+    integration_settings: Settings,
+) -> None:
+    identity = await seed_m2_identity(db_session, "semantic-column")
+    provider = SemanticEmbeddingStub()
+    semantic_settings = integration_settings.model_copy(
+        update={"embedding_provider": "fastembed"}
+    )
+    target_id = await index_text(
+        api_client,
+        identity,
+        semantic_settings,
+        filename="retention.txt",
+        content="Records retention requires keeping audit evidence for seven years.",
+        idempotency_key="semantic-retention",
+        embedding=provider,
+    )
+    await index_text(
+        api_client,
+        identity,
+        semantic_settings,
+        filename="travel.txt",
+        content="Travel expenses require itemized receipts.",
+        idempotency_key="semantic-travel",
+        embedding=provider,
+    )
+
+    chunks = list((await db_session.execute(select(Chunk))).scalars())
+    assert chunks
+    assert all(chunk.development_embedding is None for chunk in chunks)
+    assert all(len(chunk.semantic_embedding or []) == 384 for chunk in chunks)
+
+    service = RetrievalService(
+        RetrievalRepository(db_session),
+        semantic_settings,
+        DeterministicCrossEncoderStub(),
+        embedding=provider,
+    )
+    result = await service.retrieve(
+        context=TenantContext(
+            user_id=identity.user_id,
+            tenant_id=identity.tenant_id,
+            role=Role.OWNER,
+        ),
+        knowledge_base_id=identity.knowledge_base_id,
+        query="What is the retention period?",
+        mode=RetrievalMode.DENSE,
+        top_k=1,
+        candidate_k=2,
+        rerank=False,
+    )
+
+    assert result.candidates[0].document_id == target_id
+    assert result.embedding_version == provider.version
