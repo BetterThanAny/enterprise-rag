@@ -22,10 +22,8 @@ flowchart LR
     Retrieve --> Provider["Reranker + OpenAI-compatible LLM"]
 ```
 
-The repository has released M1 through M5. The M6 implementation is present as a release candidate
-and remains pending the final GitHub delivery checks recorded in `PLAN.md`. See
-[architecture](docs/architecture.md), [reproducible demos](docs/demo.md), and the command-by-command
-acceptance record in `PLAN.md`.
+The repository implements and has released M1 through M6. See [architecture](docs/architecture.md),
+[reproducible demos](docs/demo.md), and the command-by-command acceptance record in `PLAN.md`.
 
 ## Evidence, not headline percentages
 

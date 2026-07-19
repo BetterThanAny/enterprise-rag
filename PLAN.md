@@ -833,17 +833,14 @@ run `29509631260` 在 `Start stateful test dependencies` 步骤失败：GitHub R
 - 原有 lint、strict type、unit、integration、security、fault、smoke、负载与 GitHub Actions
   全部无回归，且没有 skipped/0 tests/静默环境 gating。
 
-#### 实施状态（2026-07-17）
+#### 实施状态（2026-07-19）
 
-**状态：进行中。** 本里程碑只补强真实语义证据、Provider live smoke 与作品集交付可信度；
-不实现 Vue UI、会话系统、通用 provider 管理后台或在线生产部署。只有上述退出条件实际执行后
-才会更新为完成。
+**状态：已完成。** 本里程碑只补强真实语义证据、Provider live smoke 与作品集交付可信度；
+没有实现 Vue UI、会话系统、通用 provider 管理后台或在线生产部署。
 
-#### M6 本地发布候选验收（2026-07-19）
+#### M6 发布验收（2026-07-19）
 
-当前实现已完成本地退出条件验证，但在当前提交推送并通过 GitHub Actions、GitHub 识别
-Apache-2.0 license、仓库 description/topics 写入成功前，M6 继续保持“进行中”，README 不将其
-表述为已发布里程碑。
+当前实现已完成本地与 GitHub 退出条件验证；README、PLAN、公开仓库状态和实际发布内容一致。
 
 | 命令 | 结果 |
 |---|---|
@@ -864,9 +861,10 @@ Apache-2.0 license、仓库 description/topics 写入成功前，M6 继续保持
 GitHub Actions run `29673479873` 已通过依赖启动、migration、lint/type、unit、integration/
 security 和确定性质量回归；GitHub 也已识别根目录 `LICENSE` 为 Apache-2.0。
 
-唯一剩余发布门禁是 GitHub description/topics。两次 `gh repo edit` 均被本机 1Password 外部写
-操作审批门禁拒绝；随后尝试使用已登录浏览器页面完成同一操作，但浏览器控制无法稳定连接，未在
-不可见状态下盲目提交。因此 M6 仍保持“进行中”，待该元数据写入并复核后才能标记完成。
+最终远端复核确认仓库 description 已设置，topics 包含 `rag`、`fastapi`、`pgvector`、
+`postgresql`、`multi-tenant`、`retrieval-augmented-generation` 和 `python`，license 为
+Apache-2.0；验收记录提交 `f19ecfc` 对应 GitHub Actions run `29673592356` 也已成功。
+因此 M6 全部退出条件为 **verified**，没有 failed 或 unverified 项。
 
 ## 6. 总体验收标准
 
