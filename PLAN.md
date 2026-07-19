@@ -860,8 +860,13 @@ Apache-2.0 license、仓库 description/topics 写入成功前，M6 继续保持
 | `load_test.py --chunks 50000 --concurrency 20 --requests 200 --max-p95-ms 500` | 通过；client p50/p95/p99 = 109.014/144.042/157.091 ms，server p95 = 53.619 ms，`llm_included=false` |
 | `gitleaks dir . --redact --verbose --no-banner` | 通过；扫描约 1.58 MB，0 secret findings |
 
-本地已验证项没有 failed 或 unverified；GitHub-hosted CI、license 识别和 description/topics 是
-剩余远端发布门禁。仓库元数据写入首次尝试被本机 1Password 外部写操作审批门禁拒绝，未绕过。
+本地已验证项没有 failed 或 unverified。M6 候选提交 `ac7c86c` 已推送到 `origin/main`，
+GitHub Actions run `29673479873` 已通过依赖启动、migration、lint/type、unit、integration/
+security 和确定性质量回归；GitHub 也已识别根目录 `LICENSE` 为 Apache-2.0。
+
+唯一剩余发布门禁是 GitHub description/topics。两次 `gh repo edit` 均被本机 1Password 外部写
+操作审批门禁拒绝；随后尝试使用已登录浏览器页面完成同一操作，但浏览器控制无法稳定连接，未在
+不可见状态下盲目提交。因此 M6 仍保持“进行中”，待该元数据写入并复核后才能标记完成。
 
 ## 6. 总体验收标准
 
