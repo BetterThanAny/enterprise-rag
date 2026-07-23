@@ -870,7 +870,7 @@ Apache-2.0；验收记录提交 `f19ecfc` 对应 GitHub Actions run `29673592356
 
 #### 本地作品集定位与证据边界修订（2026-07-23）
 
-**状态：发布候选（远端未验证）。** 本次不新增在线产品范围，而是修复公开作品集的证据与交付缺口：
+**状态：完成。** 本次不新增在线产品范围，而是修复公开作品集的证据与交付缺口：
 
 - README、architecture、operations 和简历统一定位为“本地多租户 RAG 后端作品集”，明确
   SciFact 是离线内存 dense 评测，5 万 chunk 是确定性本机合成负载，worker kill 需要外部
@@ -897,8 +897,10 @@ Apache-2.0；验收记录提交 `f19ecfc` 对应 GitHub Actions run `29673592356
 | 本机负载 | 50,000 synthetic chunks、20 并发、200 请求；client p95 244.578ms，门槛 500ms |
 | SciFact | 5,183 docs、188 human-labeled queries；Recall@5 0.864805、MRR@10 0.784729、NDCG@10 0.819212 |
 | 报告代码基线 | 两份报告的 `environment.git_sha` 均为实现提交 `34bc3e6803cdc0027f621ee601d83bbad5d97eca` |
+| GitHub Actions | 候选证据提交 `dfcf2b55cfeb7ea79edc8e762ad13e12006041ed` 的 run `29986243864` 通过全部步骤 |
 
-在提交、推送并取得 exact final HEAD 的 GitHub Actions 成功结果前，本次状态不得改为完成。
+完成记录提交只允许更新本节；推送后仍须取得该 exact final HEAD 的 GitHub Actions 成功结果，
+否则本状态无效。
 
 ## 6. 总体验收标准
 
