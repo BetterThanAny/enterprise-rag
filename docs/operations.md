@@ -9,7 +9,7 @@
 4. Confirm the finite `migrate` service exited successfully; API and worker start only after it has
    upgraded the database once.
 5. Confirm `docker compose ps`, `curl --fail http://127.0.0.1:18000/health/ready`, and
-   `mise exec -- uv run alembic current` report healthy dependencies and `20260716_0005 (head)`.
+   `mise exec -- uv run alembic current` report healthy dependencies and `20260717_0006 (head)`.
 6. Run `mise exec -- uv run python scripts/smoke_test.py` with a host-addressed `DATABASE_URL`.
 
 `scripts/demo.py` performs this flow with process-local ephemeral secrets and isolated Compose
@@ -35,7 +35,9 @@ volumes. It leaves the stack intact for inspection and never writes those secret
 
 - Worker restart: `enterprise_rag_worker.enqueue_pending` re-enqueues pending jobs and running jobs
   whose lease is missing or expired. Schema migration is owned by the finite Compose `migrate`
-  service; chunk replacement and job success remain one transaction.
+  service; chunk replacement and job success remain one transaction. Docker Compose does not act as
+  a production process supervisor, so an operator or external supervisor must restart a killed
+  worker before this recovery path runs.
 - Redis outage: uploads remain authoritative in PostgreSQL even if queue publication fails. Restore
   Redis, then restart the worker or run `python -m enterprise_rag_worker.enqueue_pending` in the
   worker environment. Verify the job reaches `succeeded` and has one chunk set.

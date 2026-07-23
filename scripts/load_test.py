@@ -17,6 +17,7 @@ from sqlalchemy import delete, func, insert, select, text
 
 from enterprise_rag_core.config import Settings
 from enterprise_rag_core.database import create_database_resources
+from enterprise_rag_core.evaluation import runtime_metadata
 from enterprise_rag_core.indexing import DeterministicEmbeddingStub
 from enterprise_rag_core.models import (
     Chunk,
@@ -62,7 +63,7 @@ async def replace_load_corpus(
     settings: Settings,
     *,
     chunks: int,
-) -> tuple[UUID, str, str, float]:
+) -> tuple[UUID, str, str, float, str]:
     started = time.perf_counter()
     engine, session_factory = create_database_resources(settings.database_url)
     storage = MinioObjectStorage(settings)
@@ -192,8 +193,15 @@ async def replace_load_corpus(
             if actual != chunks or inserted != chunks:
                 raise RuntimeError(f"load corpus mismatch: expected={chunks} actual={actual}")
             await session.execute(text("ANALYZE chunks"))
+            postgres_version = await session.scalar(text("SHOW server_version"))
             await session.commit()
-        return tenant_id, str(knowledge_base_id), password, time.perf_counter() - started
+        return (
+            tenant_id,
+            str(knowledge_base_id),
+            password,
+            time.perf_counter() - started,
+            str(postgres_version),
+        )
     finally:
         await engine.dispose()
 
@@ -261,9 +269,11 @@ async def run_requests(
 
 async def execute(arguments: argparse.Namespace) -> dict[str, object]:
     settings = Settings()  # type: ignore[call-arg]
-    tenant_id, knowledge_base_id, password, seed_seconds = await replace_load_corpus(
-        settings,
-        chunks=arguments.chunks,
+    tenant_id, knowledge_base_id, password, seed_seconds, postgres_version = (
+        await replace_load_corpus(
+            settings,
+            chunks=arguments.chunks,
+        )
     )
     token = await authenticate(arguments.api_url, password)
     client, server = await run_requests(
@@ -290,6 +300,10 @@ async def execute(arguments: argparse.Namespace) -> dict[str, object]:
             "llm_included": False,
             "retriever_version": settings.retrieval_config_version,
             "embedding_version": settings.embedding_model_version,
+        },
+        "environment": {
+            **runtime_metadata("sqlalchemy", "psycopg", "pgvector", "flashrank"),
+            "postgresql_server_version": postgres_version,
         },
         "seeding": {"seconds": round(seed_seconds, 3)},
         "client_latency_ms": {

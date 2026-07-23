@@ -1,12 +1,13 @@
-# Enterprise RAG
+# Enterprise RAG — Local Backend Portfolio
 
 [![CI](https://github.com/BetterThanAny/enterprise-rag/actions/workflows/ci.yml/badge.svg)](https://github.com/BetterThanAny/enterprise-rag/actions/workflows/ci.yml)
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB.svg)](.mise.toml)
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 
-A backend-first, multi-tenant RAG knowledge base focused on the hard parts that portfolio demos
-often skip: SQL-level tenant/ACL filtering, idempotent indexing, worker-kill recovery, authorized
-citations, versioned traces, and reproducible retrieval evidence.
+This is a local backend portfolio project using an enterprise-document scenario to demonstrate
+SQL-level tenant/ACL filtering, idempotent indexing, worker-restart recovery, authorized citations,
+versioned traces, and reproducible retrieval evidence. It is not presented as a deployed enterprise
+product or a production benchmark.
 
 ```mermaid
 flowchart LR
@@ -33,10 +34,17 @@ The repository implements and has released M1 through M6. See [architecture](doc
 | Deterministic hash baseline (384d) | Same SciFact subset | 0.000000 | 0.000000 | 0.000000 | Negative control, not a semantic model |
 | Lexical regression | 200 controlled synthetic queries | 1.000000 | see report | see report | Repeatable correctness gate, not production quality |
 
-The SciFact run used a pinned archive checksum and recorded 445.484 seconds for full-corpus CPU
-embedding; the reproducible report lives at
-`data/eval/reports/m6-scifact-bge-small-en-v1.5.json`. Dataset provenance and licenses are in
-`data/eval/README.md`.
+The SciFact run is an offline in-memory dense retrieval evaluation of the embedding model. It does
+not exercise PostgreSQL/pgvector, hybrid fusion, ACL filtering, the HTTP API, or generation. It used
+a pinned archive checksum and recorded 445.484 seconds for full-corpus CPU embedding; the
+reproducible report lives at `data/eval/reports/m6-scifact-bge-small-en-v1.5.json`. Dataset
+provenance and licenses are in `data/eval/README.md`.
+
+The separately recorded 50,000-chunk load gate uses deterministic 16-dimensional test embeddings,
+100 synthetic documents, 200 measured local-loopback requests, and no LLM generation. Its client
+p95 of 144.042 ms is a repeatable local regression result, not the latency of the FastEmbed SciFact
+run and not a production capacity claim. New reports also record the Git SHA, Python/platform/CPU
+context, relevant package versions, and PostgreSQL server version where applicable.
 
 ## Current capabilities
 
@@ -55,7 +63,8 @@ embedding; the reproducible report lives at
 - A real CPU FastEmbed `BAAI/bge-small-en-v1.5` provider with a separate 384-dimensional semantic
   vector column and non-destructive migration from the original 16-dimensional test vectors
 - Idempotent upload/update/rebuild operations, document deletion, and orphan-object cleanup
-- Worker-kill recovery at parse, embedding, and database-write stages without duplicate chunks
+- Worker-restart recovery after kills at parse, embedding, and database-write stages without
+  duplicate chunks; an external process supervisor must perform the restart
 - Tenant-scoped document and job APIs with filename and upload-size validation
 - Switchable PostgreSQL full-text, pgvector dense, and RRF hybrid retrieval with tenant,
   knowledge-base, current-version, and ACL filtering inside each ranking query
@@ -88,9 +97,23 @@ explicit test stub, while the optional Compose Ollama profile has been live-test
 tokens. Provider usage is exact when returned and marked `estimated` otherwise.
 
 This is not a hosted SaaS or a production benchmark. There is no frontend, conversation/message
-persistence, OCR/layout model, provider-management UI, external OTLP deployment, or online demo.
-SciFact is scientific-domain evidence retrieval and must not be presented as enterprise-policy
-traffic. These limits are intentional and documented rather than implied as delivered features.
+persistence, OCR/layout model, provider-management UI, external OTLP deployment, online demo, or
+database row-level security. Tenant isolation is an application-query invariant backed by composite
+constraints and tests, so it must not be described as database-enforced RLS. SciFact is
+scientific-domain evidence retrieval and must not be presented as enterprise-policy traffic. These
+limits are intentional and documented rather than implied as delivered features.
+
+The default GitHub Actions workflow runs the 110-test unit/integration/security/fault suite against
+real PostgreSQL/pgvector, Redis, and MinIO. It enforces 88% aggregate line coverage plus explicit
+minimums for document orchestration (75%), retrieval/indexing/generation core (85% combined), and
+worker entrypoints (95% combined), then runs a secret scan and the small deterministic generation
+regression. The model download, SciFact evaluation, 50,000-chunk load run, and live provider smoke
+remain explicit manual evidence because they are large, machine-dependent, or require a live model
+service.
+
+The public history begins with a consolidated M1-M5 snapshot rather than day-by-day commits. That
+history is preserved instead of being rewritten or backfilled; it is not evidence of development
+chronology. See [repository history and evidence](docs/repository-history.md) for the review boundary.
 
 ## Environment
 
@@ -111,11 +134,19 @@ object-storage, or JWT secret is committed.
 mise exec -- uv sync
 mise exec -- uv run ruff check .
 mise exec -- uv run pyright
-mise exec -- uv run pytest -q tests/unit
+mise exec -- uv run pytest -q tests/unit tests/integration tests/security tests/fault \
+  --cov=enterprise_rag_core --cov=enterprise_rag_api --cov=enterprise_rag_worker \
+  --cov-report=term-missing --cov-fail-under=88
+mise exec -- uv run coverage report \
+  --include='*/enterprise_rag_core/documents.py' --fail-under=75
+mise exec -- uv run coverage report \
+  --include='*/enterprise_rag_core/indexing.py,*/enterprise_rag_core/generation.py,*/enterprise_rag_core/retrieval.py' \
+  --fail-under=85
+mise exec -- uv run coverage report \
+  --include='*/enterprise_rag_worker/broker.py,*/enterprise_rag_worker/dispatcher.py,*/enterprise_rag_worker/run_job.py,*/enterprise_rag_worker/tasks.py' \
+  --fail-under=95
+mise exec -- gitleaks dir . --redact --no-banner
 mise exec -- uv run alembic upgrade head
-mise exec -- uv run pytest -q tests/integration
-mise exec -- uv run pytest -q tests/security
-mise exec -- uv run pytest -q tests/fault
 mise exec -- uv run python scripts/smoke_test.py
 mise exec -- uv run python scripts/evaluate_retrieval.py --dataset data/eval/retrieval.jsonl
 mise exec -- uv run python scripts/evaluate_generation.py --dataset data/eval/generation.jsonl

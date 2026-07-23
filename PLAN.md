@@ -1,10 +1,10 @@
-# 企业级多租户 RAG 知识库实施计划
+# 本地后端作品集：多租户 RAG 知识库实施计划
 
 ## 1. 项目定位
 
-构建一个面向企业内部文档的多租户知识库服务。系统支持文档上传、异步解析、增量索引、Hybrid Search、Rerank、ACL 权限过滤、引用溯源、多模型 Provider、流式回答、评测与可观测性。
+构建一个以企业内部文档为场景、可在本地复现的多租户 RAG 后端作品集。系统支持文档上传、异步解析、增量索引、Hybrid Search、Rerank、ACL 权限过滤、引用溯源、多模型 Provider、流式回答、评测与可观测性。
 
-这个项目的目标不是复刻 RAGFlow 或 Dify，而是用可控的个人项目规模证明：能够把 RAG 接入真实后端系统，并对数据隔离、检索质量、失败恢复、延迟和成本负责。
+这个项目的目标不是复刻 RAGFlow 或 Dify，也不声称已经服务真实企业用户；它用可控的个人项目规模证明：能够把 RAG 接入可运行的后端系统，并对数据隔离、检索质量、失败恢复、延迟和成本建立可复现的本地证据。
 
 ### 目标岗位信号
 
@@ -13,7 +13,7 @@
 - 异步任务、幂等性和失败恢复
 - RAG 检索与生成质量评测
 - 多租户、RBAC、ACL 和安全边界
-- Docker 化部署、trace、metrics 和日志
+- Docker Compose 本地交付、trace、metrics 和日志
 
 ### 非目标
 
@@ -21,6 +21,8 @@
 - 不实现完整 OCR/版面分析模型；优先集成成熟解析器。
 - 不用“多 Agent 对话”替代确定性的检索与权限逻辑。
 - MVP 不追求 Kubernetes、多区域容灾或互联网规模流量。
+- 不把本地 Compose、合成负载或离线公开数据集评测包装成生产部署、真实企业流量或业务影响。
+- 不实现 PostgreSQL RLS；租户隔离依赖受测试约束的应用查询和数据库复合外键。
 
 ## 2. GitHub 调研基线
 
@@ -866,6 +868,25 @@ security 和确定性质量回归；GitHub 也已识别根目录 `LICENSE` 为 A
 Apache-2.0；验收记录提交 `f19ecfc` 对应 GitHub Actions run `29673592356` 也已成功。
 因此 M6 全部退出条件为 **verified**，没有 failed 或 unverified 项。
 
+#### 本地作品集定位与证据边界修订（2026-07-23）
+
+**状态：修订中。** 本次不新增在线产品范围，而是修复公开作品集的证据与交付缺口：
+
+- README、architecture、operations 和简历统一定位为“本地多租户 RAG 后端作品集”，明确
+  SciFact 是离线内存 dense 评测，5 万 chunk 是确定性本机合成负载，worker kill 需要外部
+  监督者重启后才进入 lease 恢复路径；当前没有 PostgreSQL RLS、生产部署或真实企业流量。
+- 简历移除 144ms 合成压测数字，不再把模型离线质量与本机性能拼成一个卖点；“验证隔离”改为
+  “覆盖跨租户拒绝与授权前过滤回归”，不把测试通过升级成安全证明。
+- 新增 document orchestration 与 worker entrypoint 单元测试，并修复 retry 集成测试依赖
+  `datetime.now()` 临界值造成的时序脆弱性。CI 除 aggregate coverage 外，对 documents、
+  retrieval/indexing/generation core 和 worker entrypoints 设置独立 coverage 下限。
+- 公开说明 Git 历史从合并后的 M1-M5 snapshot 开始；保留真实历史，不重写、不回填假提交或
+  虚构 PR。后续改动以边界清晰的提交和对应 CI 证据交付。
+- 公开评测与负载报告新增 Git SHA、Python/platform/CPU、关键包版本和 PostgreSQL server
+  version 等复现上下文。SciFact、5 万 chunk 和 live provider 仍是显式 manual evidence。
+
+在提交、推送并取得 exact final HEAD 的 GitHub Actions 成功结果前，本次状态不得改为完成。
+
 ## 6. 总体验收标准
 
 | 类别 | 验收标准 |
@@ -876,10 +897,10 @@ Apache-2.0；验收记录提交 `f19ecfc` 对应 GitHub Actions run `29673592356
 | 检索 | 200 条固定评测集 Recall@5 >= 0.85 |
 | 引用 | 有答案样本引用正确率 >= 90% |
 | 拒答 | 无证据问题正确拒答率 >= 90% |
-| 性能 | 5 万 chunk、20 并发时检索 p95 <= 500ms |
-| 恢复 | 任务各阶段终止后可恢复且无重复数据 |
+| 性能 | 本机确定性 5 万 synthetic chunk、20 并发、200 请求时检索 p95 <= 500ms，不含生成 |
+| 恢复 | 外部监督者重启 worker 后，任务各阶段终止可通过 lease 恢复且无重复数据 |
 | 观测 | 日志、metrics、trace 可通过 request/run ID 关联 |
-| 部署 | Docker Compose 可从空环境启动完整依赖 |
+| 本地交付 | Docker Compose 可从空环境启动完整依赖，不等同于生产部署 |
 
 ## 7. 计划验收命令
 
@@ -889,7 +910,10 @@ Apache-2.0；验收记录提交 `f19ecfc` 对应 GitHub Actions run `29673592356
 mise exec -- uv sync
 mise exec -- uv run ruff check .
 mise exec -- uv run pyright
-mise exec -- uv run pytest -q
+mise exec -- uv run pytest -q tests/unit tests/integration tests/security tests/fault \
+  --cov=enterprise_rag_core --cov=enterprise_rag_api --cov=enterprise_rag_worker \
+  --cov-report=term-missing --cov-fail-under=88
+mise exec -- gitleaks dir . --redact --no-banner
 docker compose up -d --build
 mise exec -- uv run alembic upgrade head
 mise exec -- uv run alembic check
@@ -939,3 +963,5 @@ mise exec -- uv run python scripts/load_test.py --chunks 50000 --concurrency 20
 | 2026-07-16 09:45 CST | M5 项目依赖（Prometheus client、OpenTelemetry API/SDK、OTLP/HTTP exporter） | `mise exec -- uv add 'prometheus-client>=0.22,<1' 'opentelemetry-api>=1.37,<2' 'opentelemetry-sdk>=1.37,<2' 'opentelemetry-exporter-otlp-proto-http>=1.37,<2'` | 低 cardinality metrics、跨阶段 trace 与可选 OTLP export | `mise exec -- uv remove prometheus-client opentelemetry-api opentelemetry-sdk opentelemetry-exporter-otlp-proto-http` |
 | 2026-07-16 10:36 CST | uv 0.11.28（mise 项目工具） | 在 `.mise.toml` 固定版本后执行 `mise install` | 使 README fresh-machine 路径只依赖已声明的 Git、Docker、mise，并与 Dockerfile 版本一致 | `mise uninstall uv@0.11.28` |
 | 2026-07-17 10:55 CST | M6 项目依赖（FastEmbed 0.8、NumPy 2） | `mise exec -- uv add 'fastembed>=0.8,<0.9'` 与 `mise exec -- uv add 'numpy>=2,<3'` | 真实 CPU ONNX semantic embedding 与可复现公开检索评测 | `mise exec -- uv remove fastembed numpy` |
+| 2026-07-23 | pytest-cov 7.1（项目 dev dependency） | `mise exec -- uv add --dev 'pytest-cov>=7,<8'` | 为 unit/integration/security/fault 全量测试建立 88% aggregate line coverage CI 门禁 | `mise exec -- uv remove --dev pytest-cov` |
+| 2026-07-23 | Gitleaks 8.30.1（mise 项目工具） | 在 `.mise.toml` 固定 `gitleaks = "8.30.1"` 后执行 `mise install` | 让本地与 GitHub Actions 使用相同版本执行 secret scan | `mise uninstall gitleaks@8.30.1` |

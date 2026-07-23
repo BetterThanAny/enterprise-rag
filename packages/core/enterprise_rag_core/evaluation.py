@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import json
 import math
+import os
+import platform
 from dataclasses import dataclass
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import cast
 
@@ -28,6 +31,24 @@ class RetrievalDataset:
     description: str
     corpus: tuple[CorpusDocument, ...]
     queries: tuple[RetrievalQuery, ...]
+
+
+def runtime_metadata(*package_names: str) -> dict[str, object]:
+    packages: dict[str, str] = {}
+    for package_name in package_names:
+        try:
+            packages[package_name] = version(package_name)
+        except PackageNotFoundError:
+            packages[package_name] = "not-installed"
+    return {
+        "git_sha": os.environ.get("GIT_SHA", "unknown"),
+        "python_version": platform.python_version(),
+        "platform": platform.platform(),
+        "machine": platform.machine(),
+        "processor": platform.processor() or "unknown",
+        "logical_cpu_count": os.cpu_count(),
+        "packages": packages,
+    }
 
 
 def recall_at_k(ranking: list[str], relevant: set[str], k: int) -> float:

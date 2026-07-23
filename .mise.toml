@@ -1,6 +1,7 @@
 [tools]
 python = "3.12.13"
 uv = "0.11.28"
+gitleaks = "8.30.1"
 
 [env]
 _.file = ".env"

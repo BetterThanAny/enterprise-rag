@@ -49,12 +49,26 @@ jobs:
         run: |
           mise exec -- uv run ruff check .
           mise exec -- uv run pyright
-      - name: Unit tests
-        run: mise exec -- uv run pytest -q tests/unit
-      - name: Integration and security tests
+      - name: Full test suite and coverage gate
         run: |
-          mise exec -- uv run pytest -q tests/integration
-          mise exec -- uv run pytest -q tests/security
+          mise exec -- uv run pytest -q \
+            tests/unit tests/integration tests/security tests/fault \
+            --cov=enterprise_rag_core \
+            --cov=enterprise_rag_api \
+            --cov=enterprise_rag_worker \
+            --cov-report=term-missing \
+            --cov-fail-under=88
+          mise exec -- uv run coverage report \
+            --include='*/enterprise_rag_core/documents.py' \
+            --fail-under=75
+          mise exec -- uv run coverage report \
+            --include='*/enterprise_rag_core/indexing.py,*/enterprise_rag_core/generation.py,*/enterprise_rag_core/retrieval.py' \
+            --fail-under=85
+          mise exec -- uv run coverage report \
+            --include='*/enterprise_rag_worker/broker.py,*/enterprise_rag_worker/dispatcher.py,*/enterprise_rag_worker/run_job.py,*/enterprise_rag_worker/tasks.py' \
+            --fail-under=95
+      - name: Secret scan
+        run: mise exec -- gitleaks dir . --redact --no-banner
       - name: Small deterministic quality regression
         env:
           DATABASE_URL: ${{ env.TEST_DATABASE_URL }}

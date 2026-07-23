@@ -21,6 +21,7 @@ from enterprise_rag_core.evaluation import (
     ndcg_at_k,
     recall_at_k,
     reciprocal_rank_at_k,
+    runtime_metadata,
 )
 from enterprise_rag_core.indexing import (
     DeterministicEmbeddingStub,
@@ -253,6 +254,7 @@ def main() -> None:
             "minimum_absolute_delta": 0.20,
             "status": "passed" if recall_delta >= 0.20 else "non_finding_below_threshold",
         },
+        "environment": runtime_metadata("fastembed", "numpy", "onnxruntime"),
         "limitations": [
             "SciFact is scientific-domain retrieval, not enterprise-policy production traffic.",
             "The report validates semantic retrieval evidence, not generation quality.",

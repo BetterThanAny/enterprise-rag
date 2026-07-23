@@ -2,7 +2,12 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from enterprise_rag_core.evaluation import ndcg_at_k, recall_at_k, reciprocal_rank_at_k
+from enterprise_rag_core.evaluation import (
+    ndcg_at_k,
+    recall_at_k,
+    reciprocal_rank_at_k,
+    runtime_metadata,
+)
 from enterprise_rag_core.reranking import DeterministicCrossEncoderStub
 from enterprise_rag_core.retrieval import lexical_websearch_query, reciprocal_rank_fusion
 
@@ -31,6 +36,19 @@ def test_retrieval_metrics_handle_hits_misses_and_graded_order() -> None:
     assert reciprocal_rank_at_k(ranking, relevant, 3) == 0.5
     assert abs(ndcg_at_k(ranking, relevant, 3) - 0.6934264036) < 1e-10
     assert recall_at_k([], relevant, 5) == 0.0
+
+
+def test_runtime_metadata_records_reproducibility_context() -> None:
+    metadata = runtime_metadata("numpy", "definitely-not-an-installed-enterprise-rag-package")
+    packages = metadata["packages"]
+
+    assert metadata["python_version"]
+    assert metadata["platform"]
+    assert metadata["machine"]
+    assert metadata["logical_cpu_count"]
+    assert isinstance(packages, dict)
+    assert packages["numpy"]
+    assert packages["definitely-not-an-installed-enterprise-rag-package"] == "not-installed"
 
 
 def test_deterministic_cross_encoder_stub_scores_query_passage_pairs_jointly() -> None:

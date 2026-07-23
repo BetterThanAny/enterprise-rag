@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
 import pytest
@@ -206,7 +206,7 @@ async def test_transient_failure_backs_off_then_succeeds_without_duplicates(
     assert job is not None
     assert job.attempts == 1
     assert job.available_at > datetime.now(UTC)
-    job.available_at = datetime.now(UTC)
+    job.available_at = datetime.now(UTC) - timedelta(seconds=1)
     await db_session.commit()
 
     second_result = await IndexingPipeline(
@@ -241,7 +241,7 @@ async def test_retry_exhaustion_marks_job_version_and_initial_document_failed(
     assert first.status is IndexJobStatus.PENDING
     job = await db_session.get(IndexJob, task_id)
     assert job is not None
-    job.available_at = datetime.now(UTC)
+    job.available_at = datetime.now(UTC) - timedelta(seconds=1)
     await db_session.commit()
 
     second = await IndexingPipeline(settings, embedding=AlwaysFailEmbedding()).process(task_id)
