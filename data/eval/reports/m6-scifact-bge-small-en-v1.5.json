@@ -16,6 +16,19 @@
     "source": "https://github.com/allenai/scifact",
     "version": "scifact-dev-2020"
   },
+  "environment": {
+    "git_sha": "34bc3e6803cdc0027f621ee601d83bbad5d97eca",
+    "logical_cpu_count": 10,
+    "machine": "arm64",
+    "packages": {
+      "fastembed": "0.8.0",
+      "numpy": "2.5.1",
+      "onnxruntime": "1.27.0"
+    },
+    "platform": "macOS-15.7.5-arm64-arm-64bit",
+    "processor": "arm",
+    "python_version": "3.12.13"
+  },
   "limitations": [
     "SciFact is scientific-domain retrieval, not enterprise-policy production traffic.",
     "The report validates semantic retrieval evidence, not generation quality."
@@ -24,31 +37,31 @@
     "deterministic_hash_baseline": {
       "dimensions": 384,
       "metrics": {
-        "document_embedding_seconds": 2.602,
+        "document_embedding_seconds": 2.43,
         "mrr_at_10": 0.0,
         "ndcg_at_10": 0.0,
         "queries": 188,
-        "query_embedding_seconds": 0.05,
+        "query_embedding_seconds": 0.04,
         "recall_at_5": 0.0,
-        "search_latency_ms_p50": 0.266,
-        "search_latency_ms_p95": 0.521
+        "search_latency_ms_p50": 0.232,
+        "search_latency_ms_p95": 0.27
       },
       "version": "deterministic-sha256-v1"
     },
     "real_semantic": {
       "dimensions": 384,
       "metrics": {
-        "document_embedding_seconds": 445.484,
+        "document_embedding_seconds": 414.295,
         "mrr_at_10": 0.784729,
         "ndcg_at_10": 0.819212,
         "queries": 188,
-        "query_embedding_seconds": 1.032,
+        "query_embedding_seconds": 1.429,
         "recall_at_5": 0.864805,
-        "search_latency_ms_p50": 0.544,
-        "search_latency_ms_p95": 0.699
+        "search_latency_ms_p50": 0.499,
+        "search_latency_ms_p95": 0.637
       },
       "version": "fastembed:BAAI/bge-small-en-v1.5"
     }
   },
-  "run_at": "2026-07-19T04:29:56.637460+00:00"
+  "run_at": "2026-07-23T06:46:45.389299+00:00"
 }

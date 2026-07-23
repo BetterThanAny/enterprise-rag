@@ -36,13 +36,13 @@ The repository implements and has released M1 through M6. See [architecture](doc
 
 The SciFact run is an offline in-memory dense retrieval evaluation of the embedding model. It does
 not exercise PostgreSQL/pgvector, hybrid fusion, ACL filtering, the HTTP API, or generation. It used
-a pinned archive checksum and recorded 445.484 seconds for full-corpus CPU embedding; the
+a pinned archive checksum and recorded 414.295 seconds for full-corpus CPU embedding; the
 reproducible report lives at `data/eval/reports/m6-scifact-bge-small-en-v1.5.json`. Dataset
 provenance and licenses are in `data/eval/README.md`.
 
 The separately recorded 50,000-chunk load gate uses deterministic 16-dimensional test embeddings,
 100 synthetic documents, 200 measured local-loopback requests, and no LLM generation. Its client
-p95 of 144.042 ms is a repeatable local regression result, not the latency of the FastEmbed SciFact
+p95 of 244.578 ms is a repeatable local regression result, not the latency of the FastEmbed SciFact
 run and not a production capacity claim. New reports also record the Git SHA, Python/platform/CPU
 context, relevant package versions, and PostgreSQL server version where applicable.
 

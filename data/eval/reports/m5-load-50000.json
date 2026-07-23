@@ -1,8 +1,8 @@
 {
   "client_latency_ms": {
-    "p50": 109.014,
-    "p95": 144.042,
-    "p99": 157.091
+    "p50": 109.98,
+    "p95": 244.578,
+    "p99": 259.713
   },
   "configuration": {
     "concurrency": 20,
@@ -18,18 +18,33 @@
     "generator_sha256": "8c708a8b7213ac8fb22420e6bc42ee6367e2f24f65118960a6f38ae6cd2f7af9",
     "version": "m5-deterministic-load-v1"
   },
+  "environment": {
+    "git_sha": "34bc3e6803cdc0027f621ee601d83bbad5d97eca",
+    "logical_cpu_count": 10,
+    "machine": "arm64",
+    "packages": {
+      "flashrank": "0.2.10",
+      "pgvector": "0.5.0",
+      "psycopg": "3.3.4",
+      "sqlalchemy": "2.0.51"
+    },
+    "platform": "macOS-15.7.5-arm64-arm-64bit",
+    "postgresql_server_version": "16.14 (Debian 16.14-1.pgdg12+1)",
+    "processor": "arm",
+    "python_version": "3.12.13"
+  },
   "quality_gate": {
     "maximum_p95_ms": 500.0,
-    "observed_p95_ms": 144.042,
+    "observed_p95_ms": 244.578,
     "status": "passed"
   },
-  "run_at": "2026-07-19T04:22:08.062124+00:00",
+  "run_at": "2026-07-23T06:39:31.470452+00:00",
   "seeding": {
-    "seconds": 34.212
+    "seconds": 29.298
   },
   "server_retrieval_latency_ms": {
-    "p50": 30.442,
-    "p95": 53.619,
-    "p99": 74.207
+    "p50": 28.125,
+    "p95": 49.16,
+    "p99": 105.441
   }
 }

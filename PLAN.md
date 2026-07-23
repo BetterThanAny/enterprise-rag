@@ -870,7 +870,7 @@ Apache-2.0；验收记录提交 `f19ecfc` 对应 GitHub Actions run `29673592356
 
 #### 本地作品集定位与证据边界修订（2026-07-23）
 
-**状态：修订中。** 本次不新增在线产品范围，而是修复公开作品集的证据与交付缺口：
+**状态：发布候选（远端未验证）。** 本次不新增在线产品范围，而是修复公开作品集的证据与交付缺口：
 
 - README、architecture、operations 和简历统一定位为“本地多租户 RAG 后端作品集”，明确
   SciFact 是离线内存 dense 评测，5 万 chunk 是确定性本机合成负载，worker kill 需要外部
@@ -884,6 +884,19 @@ Apache-2.0；验收记录提交 `f19ecfc` 对应 GitHub Actions run `29673592356
   虚构 PR。后续改动以边界清晰的提交和对应 CI 证据交付。
 - 公开评测与负载报告新增 Git SHA、Python/platform/CPU、关键包版本和 PostgreSQL server
   version 等复现上下文。SciFact、5 万 chunk 和 live provider 仍是显式 manual evidence。
+
+本地候选证据：
+
+| 验收项 | 结果 |
+|---|---|
+| lint / type | `ruff check .` 与 `pyright` 通过 |
+| 全量测试 | 110 passed、0 skipped；aggregate line coverage 89.25% |
+| 关键模块覆盖率 | documents 75%；indexing/generation/retrieval 组合 86%；worker entrypoints 98% |
+| migration / smoke | PostgreSQL `20260717_0006 (head)`、`alembic check` 无漂移；端到端 smoke 通过 |
+| 安全与质量门槛 | Gitleaks 无泄漏；确定性 citation/abstention 均为 1.0 |
+| 本机负载 | 50,000 synthetic chunks、20 并发、200 请求；client p95 244.578ms，门槛 500ms |
+| SciFact | 5,183 docs、188 human-labeled queries；Recall@5 0.864805、MRR@10 0.784729、NDCG@10 0.819212 |
+| 报告代码基线 | 两份报告的 `environment.git_sha` 均为实现提交 `34bc3e6803cdc0027f621ee601d83bbad5d97eca` |
 
 在提交、推送并取得 exact final HEAD 的 GitHub Actions 成功结果前，本次状态不得改为完成。
 
